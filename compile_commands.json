@@ -1,0 +1,14 @@
+[
+  {
+    "directory": "/usr/lib/llvm-13",
+    "arguments": [
+      "/usr/bin/clang",
+      "-std=c17",
+      "-Wall -Wextra, -pedantic",
+      "main.c",
+      "-o",
+      "lab1"
+    ],
+    "file": "main.c"
+  }
+]
