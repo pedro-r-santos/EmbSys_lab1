@@ -1,3 +1,4 @@
+# https://clang.llvm.org/extra/index.html
 Checks: >
   -*,
   bugprone-assert-side-effect,
@@ -133,6 +134,7 @@ Checks: >
   readability-uppercase-literal-suffix,
   clang-diagnostic-*,
 
+WarningsAsErrors: "*"
 HeaderFilterRegex: ""
 AnalyzeTemporaryDtors: false
 CheckOptions:
