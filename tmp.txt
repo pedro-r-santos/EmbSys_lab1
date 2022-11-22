@@ -1,0 +1,21 @@
+// Copyright (c) 2020 The Orbit Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// https://clang.llvm.org/extra/clang-tidy/checks/list.html
+
+// https://developers.redhat.com/blog/2021/04/06/get-started-with-clang-tidy-in-red-hat-enterprise-linux#integrate_clang_tidy_into_your_build_system
+
+// https://www.youtube.com/watch?v=akGr97hf3J8
+// https://github.com/KDAB/GammaRay/blob/master/.clang-tidy
+// https://www.youtube.com/watch?v=ezDIzTiBS_4
+// https://github.com/sasq64/autotidy/blob/master/.clang-tidy
+// https://www.youtube.com/watch?v=pIx0XkwktCo
+
+// https://clang.llvm.org/extra/clang-tidy/Integrations.html
+// https://gist.github.com/GavinRay97/3ec4412891845be6ecd6ccb31210a730
+// https://clangd.llvm.org/installation
+// https://clang.llvm.org/extra/clang-tidy/checks/list.html
+// https://clang.llvm.org/docs/ClangCommandLineReference.html#static-analyzer-flags
+// https://clang.llvm.org/extra/clang-tidy/
+// https://clang.llvm.org/docs/ClangFormatStyleOptions.html
