@@ -12,6 +12,7 @@ int main(void) {
   int ret_val = 0;
   if (server_definition == NULL) {
     /* TODO: transform error printing in a function. */
+    /* TODO: make file !*/
     ret_val = fprintf(stderr, "ERROR: SERVER -> failed to set server_definition.\n");
     return EXIT_FAILURE;
   }

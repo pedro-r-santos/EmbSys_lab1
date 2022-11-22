@@ -19,3 +19,14 @@
 // https://clang.llvm.org/docs/ClangCommandLineReference.html#static-analyzer-flags
 // https://clang.llvm.org/extra/clang-tidy/
 // https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+
+https://clang-analyzer.llvm.org/
+https://wiki.sei.cmu.edu/confluence/display/c/CON36-C.+Wrap+functions+that+can+spuriously+wake+up+in+a+loop
+https://man.archlinux.org/man/dispatch_async.3.en
+
+############# Clang C17 doesn't like glibc API
+
+https://stackoverflow.com/questions/33076175/why-is-struct-addrinfo-defined-only-if-use-xopen2k-is-defined
+https://github.com/Microsoft/vscode-cpptools/issues/2025
+https://github.com/c00kiemon5ter/iim/issues/5
+https://stackoverflow.com/questions/33076175/why-is-struct-addrinfo-defined-only-if-use-xopen2k-is-defined
