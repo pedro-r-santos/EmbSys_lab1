@@ -1,7 +1,7 @@
 
 # Editors
-**.vscode
-*.*.swp
+**/.vscode
+**/*.*.swp
 
 # Prerequisites
 *.d
