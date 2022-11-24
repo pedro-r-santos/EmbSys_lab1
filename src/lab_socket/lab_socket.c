@@ -1,7 +1,5 @@
 #include "lab_socket.h"
 
-#include <netdb.h>
-
 /* Get Client address. */
 extern inline void* get_client_addr(struct sockaddr* ptr_client_addr) {
   return (ptr_client_addr->sa_family == AF_INET)
