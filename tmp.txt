@@ -30,3 +30,17 @@ https://stackoverflow.com/questions/33076175/why-is-struct-addrinfo-defined-only
 https://github.com/Microsoft/vscode-cpptools/issues/2025
 https://github.com/c00kiemon5ter/iim/issues/5
 https://stackoverflow.com/questions/33076175/why-is-struct-addrinfo-defined-only-if-use-xopen2k-is-defined
+
+
+################# Clang doc. compiler
+https://clang.llvm.org/docs/ClangCommandLineReference.html
+https://clang.llvm.org/docs/DiagnosticsReference.html
+https://clang.llvm.org/docs/index.html
+
+
+############### C Standard
+https://www.open-std.org/JTC1/SC22/WG14/
+https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf
+
+
+
