@@ -1,11 +1,9 @@
 # -*- MakeFile -*-
-CC= /usr/bin/clang
-INC_DIR=. src
-PEDANTIC= -pedantic
-C_VERSION= -std=c17 
-GNU_SOURCE_SOCKETS= -D_GNU_SOURCE
+CC=/usr/bin/clang # clang-13
+C_VERSION=-std=c17
+GNU_SOURCE_SOCKETS=-D_GNU_SOURCE
 # https://clang.llvm.org/docs/DiagnosticsReference.html
-C_FLAGS= -Wall -Wextra -Walloca -Wanon-enum-enum-conversion -Warc-maybe-repeated-use-of-weak \
+C_FLAGS=-pedantic -Wall -Wextra -Walloca -Wanon-enum-enum-conversion -Warc-maybe-repeated-use-of-weak \
 	-Warray-bounds-pointer-arithmetic -Warray-parameter -Wassign-enum -Watomic-implicit-seq-cst -Wbad-function-cast \
 	-Wbitwise-instead-of-logical -Wbitwise-op-parentheses -Wbool-operation -Wc11-extensions -Wc2x-compat \
 	-Wc2x-extensions -Wc2x-extensions -Wcast-align -Wcast-function-type -Wcast-function-type-strict -Wcast-qual \
@@ -39,24 +37,27 @@ C_FLAGS= -Wall -Wextra -Walloca -Wanon-enum-enum-conversion -Warc-maybe-repeated
 	-Wunreachable-code-aggressive -Wunused -Wunused-const-variable -Wunused-function -Wunused-label \
 	-Wunused-lambda-capture -Wunused-local-typedef -Wunused-macros -Wunused-member-function -Wunused-parameter \
 	-Wunused-result -Wunused-variable -Wvexing-parse -Wzero-as-null-pointer-constant
-	
+
 # https://www.youtube.com/watch?v=DtGrdB8wQ_8&ab_channel=GabrielParmer
 # https://github.com/gwu-cs-os/evening_os_hour/tree/master/f19/10.2-makefiles
 # https://www.youtube.com/watch?v=eMfYyijl148&ab_channel=BhaskarChowdhury...MusingwithGNU_Linux%21%21
 # https://www.youtube.com/watch?v=43-2t7CveRI&ab_channel=Dkeathly
 # https://www.youtube.com/watch?v=GExnnTaBELk&ab_channel=BarryBrown
 
-OBJECTS= main.o lab_server.o
-CFILES=$(INC_DIR)main.c $(INC_DIR)lab_server/lab_server.c
-BINARY=bin
-	
-all: $(BIN)
+SRC_MAIN=src/
+SRC_LAB_SOCKET=src/lab_socket/
+C_FILES= main.c lab_socket.c
 
-$(BIN): $(OBJECTS)
-	$(CC) $(C_VERSION) $(PEDANTIC) $(C_FLAGS) $(GNU_SOURCE_SOCKETS) -I$(INC_DIR) -o $@ $^
+OBJECTS=bin/lab_socket.o
+BINARY=PedroR_lab1
 
-%.o:%.c	
-	$(CC) $(C_VERSION) $(PEDANTIC) $(C_FLAGS) $(GNU_SOURCE_SOCKETS) -I$(INC_DIR) -c -o $@ $^
+all: $(BINARY)
 
+$(BINARY): $(OBJECTS)
+	$(CC) -o $@ $^
 
+%.o:%.c
+	$(CC) $(C_VERSION) $(C_FLAGS) $(GNU_SOURCE_SOCKETS) -c -o $@ $<
 
+clean:
+	rm -f $(BINARY) $(C_FILES)

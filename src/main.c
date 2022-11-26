@@ -8,13 +8,9 @@
 #include "lab_socket/lab_socket.h"
 
 int main(void) {
-  struct addrinfo* server_definition = set_server_definition();
-  int ret_val = 0;
-  if (server_definition == NULL) {
-    /* TODO: transform error printing in a function. */
-    /* TODO: make file !*/
-    ret_val = fprintf(stderr, "ERROR: SERVER -> failed to set server_definition.\n");
-    return EXIT_FAILURE;
+  struct addrinfo server_info;
+  if (set_server_info(&server_info) == EXIT_FAILURE) {
+    /* TODO: implemente error handler. */
   }
   return EXIT_SUCCESS;
 }

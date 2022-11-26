@@ -1,19 +1,18 @@
 [
   {
-    "directory": "/usr/lib/llvm-13",
+    "directory": "/usr/lib/llvm-13/",
     "arguments": [
       "/usr/bin/clang",
       "-std=c17",
-      "-D_GNU_SOURCE -Wall -Wextra, -pedantic",
+      "-D_GNU_SOURCE -Wall -Wextra",
       "-I/src/lab_socket/lab_socket.h",
-      "src/main.c",
       "-o",
-      "lab1"
+      "PedroR_lab1"
     ],
     "file": "src/main.c"
   },
   {
-    "directory": "/usr/lib/llvm-13",
+    "directory": "/usr/lib/llvm-13/",
     "arguments": [
       "/usr/bin/clang",
       "-std=c17",
@@ -21,7 +20,7 @@
       "-I/src/lab_socket/lab_socket.h",
       "src/lab_socket/lab_socket.c",
       "-o",
-      "bin/lab_socket"
+      "bin/lab_socket.o"
     ],
     "file": "src/lab_socket/lab_socket.c"
   }
