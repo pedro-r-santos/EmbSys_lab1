@@ -1,15 +1,15 @@
 # -*- MakeFile -*-
-BINARY=PedroR_lab1
-SRC_DIRECTORY=./src/lab1_socket
-INCLUDE_FILES=$(foreach D,$(SRC_DIRECTORY),-I$(wildcard $(D)/*.h))
-CODE_FILES=$(foreach D,$(SRC_DIRECTORY),$(wildcard $(D)/*.c))
-OBJECT_FILES=$(patsubst %.c,%.o,$(CODE_FILES))
+BINARY:=PedroR_lab1
+SRC_DIRECTORY:=./src/lab1_socket
+INCLUDE_FILES:=$(foreach D,$(SRC_DIRECTORY),-I$(wildcard $(D)/*.h))
+CODE_FILES:=$(foreach D,$(SRC_DIRECTORY),$(wildcard $(D)/*.c))
+OBJECT_FILES:=$(patsubst %.c,%.o,$(CODE_FILES))
 
-CC=/usr/bin/clang # clang-13
-C_VERSION=-std=c17
-GNU_SOURCE_SOCKETS=-D_GNU_SOURCE
+CC:=/usr/bin/clang # clang-13
+C_VERSION:=-std=c17
+GNU_SOURCE_SOCKETS:=-D_GNU_SOURCE
 # https://clang.llvm.org/docs/DiagnosticsReference.html
-C_FLAGS=-pedantic -Wall -Wextra -Walloca -Wanon-enum-enum-conversion -Warc-maybe-repeated-use-of-weak \
+C_FLAGS:=-pedantic -Wall -Wextra -Walloca -Wanon-enum-enum-conversion -Warc-maybe-repeated-use-of-weak \
     -Warray-bounds-pointer-arithmetic -Wassign-enum -Watomic-implicit-seq-cst -Wbad-function-cast \
     -Wbitwise-op-parentheses -Wbool-operation -Wc11-extensions -Wc2x-extensions -Wc2x-extensions -Wcast-align \
     -Wcast-function-type -Wcast-qual -Wcast-qual -Wchar-subscripts -Wcomma -Wcomment -Wcompletion-handler \
@@ -48,8 +48,8 @@ all: $(BINARY)
 $(BINARY): $(OBJECT_FILES)
 	$(CC) $(C_VERSION) $(C_FLAGS) $(GNU_SOURCE_SOCKETS) -o $@ main.c $^
 
-%.o:%.c
-	$(CC) $(C_VERSION) $(C_FLAGS) $(GNU_SOURCE_SOCKETS) -c -o $@ $<
+%.o:%.c %.h
+	$(CC) $(C_VERSION) $(C_FLAGS) $(GNU_SOURCE_SOCKETS) $(INCLUDE_FILES) -c -o $@ $<
 
 clean:
 	rm -f $(BINARY) $(OBJECT_FILES)
