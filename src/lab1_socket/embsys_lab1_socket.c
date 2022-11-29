@@ -1,4 +1,4 @@
-#include "lab_socket.h"
+#include "embsys_lab1_socket.h"
 
 /* Get Client address. */
 extern inline void* get_client_addr(struct sockaddr* ptr_client_addr) {

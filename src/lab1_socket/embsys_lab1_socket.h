@@ -1,6 +1,6 @@
 
-#ifndef LAB_SOCKET_H_
-#define LAB_SOCKET_H_
+#ifndef EMBSYS_LAB1_SOCKET_H_
+#define EMBSYS_LAB1_SOCKET_H_
 
 #include <arpa/inet.h>
 #include <netdb.h>

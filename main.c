@@ -5,7 +5,7 @@
 #include <string.h>
 #include <sys/socket.h>
 
-#include "lab_socket/lab_socket.h"
+#include "src/lab1_socket/embsys_lab1_socket.h"
 
 int main(void) {
   struct addrinfo server_info;
