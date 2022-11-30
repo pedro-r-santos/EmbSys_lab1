@@ -9,6 +9,7 @@
     "cplusplus",
     "cppcoreguidelines",
     "EMBSYS",
+    "fsanitize",
     "hicpp",
     "memset",
     "multiway",

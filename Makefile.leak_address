@@ -46,14 +46,23 @@ COMPILER_FLAGS:=-g -pedantic -Wall -Wextra -Walloca -Wanon-enum-enum-conversion 
     -Wunused-result -Wunused-variable -Wvexing-parse -Wzero-as-null-pointer-constant 
 
 PTHREAD_FLAG:=-pthread
+# https://clang.llvm.org/docs/LeakSanitizer.html
+COMPILER_LEAK_FLAG:=-fsanitize=leak
+# https://clang.llvm.org/docs/AddressSanitizer.html
+COMPILER_ADDRESS_FLAG:=-fsanitize=address -fsanitize-address-use-after-return=always -fno-omit-frame-pointer \
+    -fno-optimize-sibling-calls 
+COMPILER_OPTIMIZER:=-O1
 
 all: $(BINARY)
 
 $(BINARY): $(OBJECT_FILES)
-	$(CC) $(C_VERSION) $(COMPILER_FLAGS) $(GNU_SOURCE_SOCKETS) $(PTHREAD_FLAG) -o $@ $^ 
+	$(CC) $(C_VERSION) $(COMPILER_OPTIMIZER) $(COMPILER_LEAK_FLAG) $(COMPILER_ADDRESS_FLAG) $(COMPILER_FLAGS) $(GNU_SOURCE_SOCKETS) \
+    $(PTHREAD_FLAG) -o $@ $^ 
 
 %.o:%.c  # DEPENDENCY_FILES will keep track of the .h files.
-	$(CC) $(C_VERSION)  $(COMPILER_FLAGS) $(GNU_SOURCE_SOCKETS) $(INCLUDE_FILES) $(PTHREAD_FLAG) -c -o $@ $<
+	$(CC) $(C_VERSION) $(COMPILER_OPTIMIZER) $(COMPILER_LEAK_FLAG) $(COMPILER_ADDRESS_FLAG) $(COMPILER_FLAGS) $(GNU_SOURCE_SOCKETS) \
+    $(PTHREAD_FLAG) $(INCLUDE_FILES) -c -o $@ $<
+
 
 clean:
 	rm -f $(BINARY) $(OBJECT_FILES) $(DEPENDENCY_FILES)

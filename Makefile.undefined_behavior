@@ -46,14 +46,19 @@ COMPILER_FLAGS:=-g -pedantic -Wall -Wextra -Walloca -Wanon-enum-enum-conversion 
     -Wunused-result -Wunused-variable -Wvexing-parse -Wzero-as-null-pointer-constant 
 
 PTHREAD_FLAG:=-pthread
+# https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
+UNDEFINED_BEHAVIOR_FLAG:=-fno-sanitize-recover=alignment,bool,builtin,bounds,enum,float-cast-overflow,float-divide-by-zero,function,implicit-unsigned-integer-truncation,implicit-signed-integer-truncation,implicit-integer-sign-change,integer-divide-by-zero,nonnull-attribute,null,nullability-arg,nullability-assign,nullability-return,object-size,pointer-overflow,return,returns-nonnull-attribute,shift,unsigned-shift-base,signed-integer-overflow,unreachable,unsigned-integer-overflow,implicit-conversion,vla-bound,undefined,local-bounds,implicit-conversion,integer,nullability
 
 all: $(BINARY)
 
 $(BINARY): $(OBJECT_FILES)
-	$(CC) $(C_VERSION) $(COMPILER_FLAGS) $(GNU_SOURCE_SOCKETS) $(PTHREAD_FLAG) -o $@ $^ 
+	$(CC) $(C_VERSION) $(UNDEFINED_BEHAVIOR_FLAG) $(COMPILER_FLAGS) $(GNU_SOURCE_SOCKETS) \
+    $(PTHREAD_FLAG) -o $@ $^ 
 
 %.o:%.c  # DEPENDENCY_FILES will keep track of the .h files.
-	$(CC) $(C_VERSION)  $(COMPILER_FLAGS) $(GNU_SOURCE_SOCKETS) $(INCLUDE_FILES) $(PTHREAD_FLAG) -c -o $@ $<
+	$(CC) $(C_VERSION) $(UNDEFINED_BEHAVIOR_FLAG) $(COMPILER_FLAGS) $(GNU_SOURCE_SOCKETS) \
+    $(PTHREAD_FLAG) $(INCLUDE_FILES) -c -o $@ $<
+
 
 clean:
 	rm -f $(BINARY) $(OBJECT_FILES) $(DEPENDENCY_FILES)

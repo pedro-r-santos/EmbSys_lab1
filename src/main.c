@@ -1,5 +1,7 @@
 #include <arpa/inet.h>
+#include <bits/pthreadtypes.h>
 #include <netdb.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,6 +14,5 @@ int main(void) {
   if (set_server_info(&server_info) == EXIT_FAILURE) {
     /* TODO: implemente error handler. */
   }
-  puts("hello world!!");
   return EXIT_SUCCESS;
 }
