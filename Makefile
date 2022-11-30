@@ -1,15 +1,17 @@
 # -*- MakeFile -*-
 BINARY:=PedroR_lab1
-SRC_DIRECTORY:=./src/lab1_socket
-INCLUDE_FILES:=$(foreach D,$(SRC_DIRECTORY),-I$(wildcard $(D)/*.h))
+SRC_DIRECTORY:=./src ./src/lab1_socket
+INCLUDE_FILES:=$(foreach D,$(SRC_DIRECTORY),-I$(wildcard $(D)/*.h)) # Automatically add the -I onto each include directory.
 CODE_FILES:=$(foreach D,$(SRC_DIRECTORY),$(wildcard $(D)/*.c))
 OBJECT_FILES:=$(patsubst %.c,%.o,$(CODE_FILES))
+DEPENDENCY_FILES:=$(patsubst %.c,%.d,$(CODE_FILES)) # Generate files that encode make rules for the .h dependencies.
 
 CC:=/usr/bin/clang # clang-13
 C_VERSION:=-std=c17
 GNU_SOURCE_SOCKETS:=-D_GNU_SOURCE
+DEPENDENCY_FLAGS:=-M -MP
 # https://clang.llvm.org/docs/DiagnosticsReference.html
-C_FLAGS:=-pedantic -Wall -Wextra -Walloca -Wanon-enum-enum-conversion -Warc-maybe-repeated-use-of-weak \
+COMPILER_FLAGS:=-pedantic -Wall -Wextra -Walloca -Wanon-enum-enum-conversion -Warc-maybe-repeated-use-of-weak \
     -Warray-bounds-pointer-arithmetic -Wassign-enum -Watomic-implicit-seq-cst -Wbad-function-cast \
     -Wbitwise-op-parentheses -Wbool-operation -Wc11-extensions -Wc2x-extensions -Wc2x-extensions -Wcast-align \
     -Wcast-function-type -Wcast-qual -Wcast-qual -Wchar-subscripts -Wcomma -Wcomment -Wcompletion-handler \
@@ -41,17 +43,20 @@ C_FLAGS:=-pedantic -Wall -Wextra -Walloca -Wanon-enum-enum-conversion -Warc-mayb
 	-Wuninitialized-const-reference -Wunneeded-internal-declaration -Wunneeded-member-function -Wunreachable-code \
     -Wunreachable-code-aggressive -Wunused -Wunused-const-variable -Wunused-function -Wunused-label \
     -Wunused-lambda-capture -Wunused-local-typedef -Wunused-macros -Wunused-member-function -Wunused-parameter \
-    -Wunused-result -Wunused-variable -Wvexing-parse -Wzero-as-null-pointer-constant
+    -Wunused-result -Wunused-variable -Wvexing-parse -Wzero-as-null-pointer-constant 
 
 all: $(BINARY)
 
 $(BINARY): $(OBJECT_FILES)
-	$(CC) $(C_VERSION) $(C_FLAGS) $(GNU_SOURCE_SOCKETS) -o $@ main.c $^
+	$(CC) -o $@ $^ 
 
-%.o:%.c %.h
-	$(CC) $(C_VERSION) $(C_FLAGS) $(GNU_SOURCE_SOCKETS) $(INCLUDE_FILES) -c -o $@ $<
+%.o:%.c  # DEPENDENCY_FILES will keep track of the .h files.
+	$(CC) $(C_VERSION)  $(COMPILER_FLAGS) $(GNU_SOURCE_SOCKETS) $(INCLUDE_FILES) -c -o $@ $<
 
 clean:
-	rm -f $(BINARY) $(OBJECT_FILES)
+	rm -f $(BINARY) $(OBJECT_FILES) $(DEPENDENCY_FILES)
+
+# include the dependencies
+-include $(DEPENDENCY_FILES)
 
 .PHONY: all clean
