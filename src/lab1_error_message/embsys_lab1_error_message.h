@@ -6,7 +6,6 @@
 #include <stdio.h>
 
 /* System. */
-#define MEMSET_FAILED 2
 extern void error_exit_failure(void);
 extern void error_memset_failure(char* place_of_failure);
 

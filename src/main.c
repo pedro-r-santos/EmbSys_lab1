@@ -11,26 +11,31 @@
 #include "lab1_socket/embsys_lab1_socket.h"
 
 int main(void) {
-  /*
-   * Make a thread that as the duty of pthread_cancel other threads when an error occurs.
-   * After canceling the threads it must write in each client file the warning message of the system interruption.
-   * The fist thread  to cancel is the one that receives socket communications. */
-  struct addrinfo server_info;
-  if (set_server_protocols(&server_info) == MEMSET_FAILED) {
-    error_memset_failure("set_server_info()");
-    error_set_server_protocols();
-    error_exit_failure();
+  int rv = 0;
+  /* Server definition -> IP type, Transport Layer and IP address. */
+  struct addrinfo server_protocols;
+  if (set_server_protocol(&server_protocols) == MEMSET_ERROR) {
+    /* gai_strerror(), get error message string from EAI_xxx error code. */
+    fprintf(stderr, "Error: SERVER -> set_server_protocol() : memset() failed.\n");
     return EXIT_FAILURE;
   }
-
-  int* server_filed_descriptor = set_server_file_descriptor(&server_info);
-  if (server_filed_descriptor == NULL) {
-    free(server_filed_descriptor);
-    error_set_server_filed_descriptor();
-    error_exit_failure();
+  struct addrinfo* server_info = NULL; /* Memory freed inside get_server_file_descriptor. */
+  int return_value = set_server_addr_info(&server_protocols, &server_info);
+  if (return_value != EXIT_SUCCESS) {
+    fprintf(stderr, "Error: SERVER -> getaddrinfo(): %s\n", gai_strerror(return_value));
     return EXIT_FAILURE;
   }
-
-  free(server_filed_descriptor);
+  int* server_file_descriptor = (int*)malloc(sizeof(int));
+  if (get_server_file_descriptor(server_file_descriptor, server_info) == EXIT_FAILURE) {
+    fprintf(stderr, "Error: SERVER -> get_server_file_descriptor().\n");
+    free(server_file_descriptor);
+    return EXIT_FAILURE;
+  }
+  if (set_listen(server_file_descriptor) == EXIT_FAILURE) {
+    fprintf(stderr, "Error: SERVER -> set_listen().\n");
+    free(server_file_descriptor);
+    return EXIT_FAILURE;
+  }
+  free(server_file_descriptor);
   return EXIT_SUCCESS;
 }
