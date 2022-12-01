@@ -6,7 +6,7 @@
       "-std=c17",
       "-D_GNU_SOURCE -Wall -Wextra",
       "-I/src/lab1_socket/embsys_lab1_socket.h",
-      "-I/src/lab1_error_handler/embsys_lab1_error_handler.h",
+      "-I/lab1_error_message/embsys_lab1_error_message.h",
       "-o",
       "PedroR_lab1"
     ],
@@ -19,7 +19,7 @@
       "-std=c17",
       "-D_GNU_SOURCE -Wall -Wextra, -pedantic",
       "-I/src/lab1_socket/embsys_lab1_socket.h",
-      "-I/src/lab1_error_handler/embsys_lab1_error_handler.h",
+      "-I/src/lab1_error_message/embsys_lab1_error_message.h",
       "src/lab1_socket/embsys_lab1_socket.c",
       "-o",
       "src/lab_socket/lab_socket.o"
@@ -34,10 +34,10 @@
       "-D_GNU_SOURCE -Wall -Wextra, -pedantic",
       "-I/src/lab1_socket/embsys_lab1_socket.h",
       "-I/src/lab1_error_handler/embsys_lab1_error_handler.h",
-      "src/lab1_error_handler/embsys_lab1_error_handler.c",
+      "src/lab1_error_handler/embsys_lab1_error_message.c",
       "-o",
-      "src/lab1_error_handler/embsys_lab1_error_handler.o"
+      "src/lab1_error_message/embsys_lab1_error_message.o"
     ],
-    "file": "src/lab1_error_handler/embsys_lab1_error_handler.c"
+    "file": "src/lab1_error_message/embsys_lab1_error_message.c"
   }
 ]

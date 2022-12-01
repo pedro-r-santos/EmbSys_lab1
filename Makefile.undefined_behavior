@@ -1,6 +1,6 @@
 # -*- MakeFile -*-
 BINARY:=PedroR_lab1
-SRC_DIRECTORY:=./src ./src/lab1_socket ./src/lab1_error_handler
+SRC_DIRECTORY:=./src ./src/lab1_socket ./src/lab1_error_message
 INCLUDE_FILES:=$(foreach D,$(SRC_DIRECTORY),-I$(wildcard $(D)/*.h)) # Automatically add the -I onto each include directory.
 CODE_FILES:=$(foreach D,$(SRC_DIRECTORY),$(wildcard $(D)/*.c))
 OBJECT_FILES:=$(patsubst %.c,%.o,$(CODE_FILES))
