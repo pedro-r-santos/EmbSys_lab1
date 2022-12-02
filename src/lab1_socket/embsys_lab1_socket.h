@@ -22,5 +22,6 @@ extern int set_listen(const int* server_file_descriptor);
 extern int set_client_file_descriptor(const int* server_file_descriptor, int* client_file_descriptor,
                                       char* client_ip_addr);
 extern int get_client_data(const int* client_file_descriptor, char* client_data);
+extern int send_data_to_client(const int* client_file_descriptor, const char* data_to_send);
 
 #endif

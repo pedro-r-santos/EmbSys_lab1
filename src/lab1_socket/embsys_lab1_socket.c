@@ -175,9 +175,17 @@ extern int get_client_data(const int* client_file_descriptor, char* client_data)
   ssize_t number_bytes = recv(*client_file_descriptor, client_data, MAX_CLIENT_DATA - 1, 0);
   if (number_bytes == -1) {
     perror("Error: SERVER -> recv(): ");
-    close(*client_file_descriptor);
     return EXIT_FAILURE;
   }
   client_data[number_bytes] = '\0';
+  return EXIT_SUCCESS;
+}
+
+extern int send_data_to_client(const int* client_file_descriptor, const char* data_to_send) {
+  /* Send data only to a socket in a connected state. */
+  if (send(*client_file_descriptor, data_to_send, strlen(data_to_send), 0) == -1) {
+    perror("Error: SERVER -> send(): ");
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }

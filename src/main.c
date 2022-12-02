@@ -28,6 +28,7 @@ int main(void) {
   }
   int* server_file_descriptor = malloc(sizeof(int));
   if (get_server_file_descriptor(server_file_descriptor, server_info) == EXIT_FAILURE) {
+    /* server socket is closed inside get_server_file_descriptor() */
     free(server_file_descriptor);
     return EXIT_FAILURE;
   }
@@ -59,10 +60,25 @@ int main(void) {
     /* Get data from Client. */
     char* client_data = malloc(sizeof(char) * MAX_CLIENT_DATA);
     if (get_client_data(client_file_descriptor, client_data) == EXIT_FAILURE) {
-      fprintf(stderr, "Error: SERVER -> unable to receive data from -> %s\n", client_ip_addr);
+      fprintf(stderr,
+              "Error: SERVER -> unable to receive data from -> %s\n"
+              "\tClosing communication",
+              client_ip_addr);
+      close_communication(client_file_descriptor);
       continue;
     }
     printf("SERVER: received -> '%s'\n", client_data);
+
+    /* Send data to Client. */
+    const char* data_to_client = "General Kenobi!";
+    /* Send data only to a socket in a connected state. */
+    if (send_data_to_client(client_file_descriptor, data_to_client) == EXIT_FAILURE) {
+      fprintf(stderr,
+              "Error: SERVER -> unable to send data to -> %s\n"
+              "\tClosing communication",
+              client_ip_addr);
+    }
+    close_communication(client_file_descriptor);
   }
   free(server_file_descriptor);
   return EXIT_SUCCESS;
