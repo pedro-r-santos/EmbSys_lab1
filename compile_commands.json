@@ -3,7 +3,7 @@
     "directory": "/usr/lib/llvm-13/",
     "arguments": [
       "/usr/bin/clang",
-      "-std=c17",
+      "-std=iso9899:1999",
       "-D_GNU_SOURCE -Wall -Wextra",
       "-I/src/lab1_socket/embsys_lab1_socket.h",
       "-I/lab1_error_message/embsys_lab1_error_message.h",
@@ -16,7 +16,7 @@
     "directory": "/usr/lib/llvm-13/",
     "arguments": [
       "/usr/bin/clang",
-      "-std=c17",
+      "-std=iso9899:1999",
       "-D_GNU_SOURCE -Wall -Wextra, -pedantic",
       "-I/src/lab1_socket/embsys_lab1_socket.h",
       "-I/src/lab1_error_message/embsys_lab1_error_message.h",
@@ -30,7 +30,7 @@
     "directory": "/usr/lib/llvm-13/",
     "arguments": [
       "/usr/bin/clang",
-      "-std=c17",
+      "-std=iso9899:1999",
       "-D_GNU_SOURCE -Wall -Wextra, -pedantic",
       "-I/src/lab1_socket/embsys_lab1_socket.h",
       "-I/src/lab1_error_handler/embsys_lab1_error_handler.h",

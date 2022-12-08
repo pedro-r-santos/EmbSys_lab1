@@ -1,64 +1,98 @@
 # -*- MakeFile -*-
+
 BINARY:=PedroR_lab1
-SRC_DIRECTORY:=./src ./src/lab1_socket 
-INCLUDE_FILES:=$(foreach D,$(SRC_DIRECTORY),-I$(wildcard $(D)/*.h)) # Automatically add the -I onto each include directory.
+SRC_DIRECTORY:=./src ./src/lab1_socket
+
+# Automatically add the -I onto each include directory.
+INCLUDE_FILES:=$(foreach D,$(SRC_DIRECTORY),-I$(wildcard $(D)/*.h))
+
 CODE_FILES:=$(foreach D,$(SRC_DIRECTORY),$(wildcard $(D)/*.c))
 OBJECT_FILES:=$(patsubst %.c,%.o,$(CODE_FILES))
-DEPENDENCY_FILES:=$(patsubst %.c,%.d,$(CODE_FILES)) # Generate files that encode make rules for the .h dependencies.
 
-CC:=/usr/bin/clang # clang-13
-C_VERSION:=-std=c17
+# Generate files that encode make rules for the .h dependencies.
+DEPENDENCY_FILES:=$(patsubst %.c,%.d,$(CODE_FILES))
+
+CC:=/usr/bin/clang #  gcc 10.0.1
+C_VERSION:=-std=iso9899:1999
 GNU_SOURCE_SOCKETS:=-D_GNU_SOURCE
 DEPENDENCY_FLAGS:=-M -MP
 # https://clang.llvm.org/docs/DiagnosticsReference.html
-COMPILER_FLAGS:=-g -pedantic -Wall -Wextra -Walloca -Wanon-enum-enum-conversion -Warc-maybe-repeated-use-of-weak \
-    -Warray-bounds-pointer-arithmetic -Wassign-enum -Watomic-implicit-seq-cst -Wbad-function-cast \
-    -Wbitwise-op-parentheses -Wbool-operation -Wc11-extensions -Wc2x-extensions -Wc2x-extensions -Wcast-align \
-    -Wcast-function-type -Wcast-qual -Wcast-qual -Wchar-subscripts -Wcomma -Wcomment -Wcompletion-handler \
-    -Wcompound-token-split-by-space -Wconditional-uninitialized -Wconsumed -Wconversion -Wconversion-null \
-    -Wcovered-switch-default -Wcstring-format-directive -Wcustom-atomic-properties -Wdate-time -Wdeprecated \
-    -Wdocumentation -Wdocumentation-deprecated-sync -Wdocumentation-pedantic -Wdocumentation-unknown-command \
-    -Wdollar-in-identifier-extension -Wdouble-promotion -Wduplicate-decl-specifier -Wduplicate-enum \
-    -Wduplicate-method-arg -Wduplicate-method-match -Wembedded-directive -Wempty-init-stmt -Wempty-translation-unit \
-    -Wenum-compare-conditional -Wenum-conversion -Wenum-enum-conversion -Wenum-float-conversion -Wexpansion-to-defined \
-    -Wexplicit-ownership-type -Wflexible-array-extensions -Wfloat-conversion -Wfloat-equal -Wfloat-overflow-conversion \
-    -Wfloat-zero-conversion -Wfor-loop-analysis -Wformat-nonliteral -Wformat-pedantic -Wformat-type-confusion \
-    -Wframe-address -Widiomatic-parentheses -Wimplicit-atomic-properties -Wimplicit-fallthrough \
-    -Wimplicit-fallthrough-per-function -Wimplicit-float-conversion -Wimplicit-function-declaration -Wimplicit-int \
-    -Wimplicit-int-conversion -Wimplicit-int-float-conversion -Wimplicit-retain-self -Winfinite-recursion \
-    -Wint-in-bool-context -Winvalid-or-nonexistent-directory -Wlogical-op-parentheses -Wmethod-signatures \
-    -Wmisleading-indentation -Wmissing-braces -Wmissing-field-initializers -Wmissing-method-return-type \
-    -Wmissing-noreturn -Wmissing-prototypes -Wmissing-variable-declarations -Wmost -Wnewline-eof \
-    -Wnonportable-system-include-path -Wnull-pointer-arithmetic -Wnull-pointer-subtraction \
-    -Wnullable-to-nonnull-conversion -Wobjc-signed-char-bool-implicit-int-conversion -Wover-aligned \
-    -Woverriding-method-mismatch -Wparentheses -Wpedantic -Wpointer-arith -Wpoison-system-directories \
-    -Wredundant-parens -Wreserved-macro-identifier -Wreturn-stack-address -Rsanitize-address -Wself-assign \
-    -Wself-assign-overloaded -Wself-move -Wshift-sign-overflow -Wshorten-64-to-32 -Wsign-compare -Wsign-conversion \
-    -Wsometimes-uninitialized -Wstrict-prototypes -Wstrict-selector-match -Wstring-concatenation -Wstring-conversion \
-    -Wsuspicious-bzero -Wswitch-enum -Wswitch-enum -Wtautological-overlap-compare -Wtautological-type-limit-compare \
-    -Wtautological-unsigned-char-zero-compare -Wtautological-unsigned-enum-zero-compare \
-    -Wtautological-unsigned-zero-compare -Wtautological-value-range-compare -Wthread-safety -Wthread-safety-analysis \
-    -Wthread-safety-attributes -Wthread-safety-beta -Wthread-safety-negative -Wthread-safety-precise \
-    -Wthread-safety-reference -Wthread-safety-verbose -Wundef -Wundef-prefix -Wundefined-func-template -Wuninitialized \
-	-Wuninitialized-const-reference -Wunneeded-internal-declaration -Wunneeded-member-function -Wunreachable-code \
-    -Wunreachable-code-aggressive -Wunused -Wunused-const-variable -Wunused-function -Wunused-label \
-    -Wunused-lambda-capture -Wunused-local-typedef -Wunused-macros -Wunused-member-function -Wunused-parameter \
-    -Wunused-result -Wunused-variable -Wvexing-parse -Wzero-as-null-pointer-constant 
+COMPILER_FLAGS:=-g -pedantic -Wall -Wextra -Walloca \
+	-Wanon-enum-enum-conversion -Warc-maybe-repeated-use-of-weak \
+	-Warray-bounds-pointer-arithmetic -Wassign-enum \
+	-Watomic-implicit-seq-cst -Wbad-function-cast \
+	-Wbitwise-op-parentheses -Wbool-operation -Wc11-extensions \
+	-Wc2x-extensions -Wc2x-extensions -Wcast-align -Wcast-function-type \
+	-Wcast-qual -Wcast-qual -Wchar-subscripts -Wcomma -Wcomment \
+	-Wcompletion-handler -Wcompound-token-split-by-space \
+	-Wconditional-uninitialized -Wconsumed -Wconversion -Wconversion-null \
+	-Wcovered-switch-default -Wcstring-format-directive \
+	-Wcustom-atomic-properties -Wdate-time -Wdeprecated -Wdocumentation \
+	-Wdocumentation-deprecated-sync -Wdocumentation-pedantic \
+	-Wdocumentation-unknown-command -Wdollar-in-identifier-extension \
+	-Wdouble-promotion -Wduplicate-decl-specifier -Wduplicate-enum \
+	-Wduplicate-method-arg -Wduplicate-method-match -Wembedded-directive \
+	-Wempty-init-stmt -Wempty-translation-unit -Wenum-compare-conditional \
+	-Wenum-conversion -Wenum-enum-conversion -Wenum-float-conversion \
+	-Wexpansion-to-defined -Wexplicit-ownership-type \
+	-Wflexible-array-extensions -Wfloat-conversion -Wfloat-equal \
+	-Wfloat-overflow-conversion -Wfloat-zero-conversion \
+	-Wfor-loop-analysis -Wformat-nonliteral -Wformat-pedantic \
+	-Wformat-type-confusion -Wframe-address -Widiomatic-parentheses \
+	-Wimplicit-atomic-properties -Wimplicit-fallthrough \
+	-Wimplicit-fallthrough-per-function -Wimplicit-float-conversion \
+	-Wimplicit-function-declaration -Wimplicit-int \
+	-Wimplicit-int-conversion -Wimplicit-int-float-conversion \
+	-Wimplicit-retain-self -Winfinite-recursion -Wint-in-bool-context \
+	-Winvalid-or-nonexistent-directory -Wlogical-op-parentheses \
+	-Wmethod-signatures -Wmisleading-indentation -Wmissing-braces \
+	-Wmissing-field-initializers -Wmissing-method-return-type \
+	-Wmissing-noreturn -Wmissing-prototypes \
+	-Wmissing-variable-declarations -Wmost -Wnewline-eof \
+	-Wnonportable-system-include-path -Wnull-pointer-arithmetic \
+	-Wnull-pointer-subtraction -Wnullable-to-nonnull-conversion \
+	-Wobjc-signed-char-bool-implicit-int-conversion -Wover-aligned \
+	-Woverriding-method-mismatch -Wparentheses -Wpedantic -Wpointer-arith \
+	-Wpoison-system-directories -Wredundant-parens \
+	-Wreserved-macro-identifier -Wreturn-stack-address -Rsanitize-address \
+	-Wself-assign -Wself-assign-overloaded -Wself-move \
+	-Wshift-sign-overflow -Wshorten-64-to-32 -Wsign-compare \
+	-Wsign-conversion -Wsometimes-uninitialized -Wstrict-prototypes \
+	-Wstrict-selector-match -Wstring-concatenation -Wstring-conversion \
+	-Wsuspicious-bzero -Wswitch-enum -Wswitch-enum \
+	-Wtautological-overlap-compare -Wtautological-type-limit-compare \
+    	-Wtautological-unsigned-char-zero-compare \
+	-Wtautological-unsigned-enum-zero-compare \
+	-Wtautological-unsigned-zero-compare \
+	-Wtautological-value-range-compare -Wthread-safety \
+	-Wthread-safety-analysis -Wthread-safety-attributes \
+	-Wthread-safety-beta -Wthread-safety-negative -Wthread-safety-precise \
+    	-Wthread-safety-reference -Wthread-safety-verbose -Wundef \
+	-Wundef-prefix -Wundefined-func-template -Wuninitialized \
+	-Wuninitialized-const-reference -Wunneeded-internal-declaration \
+	-Wunneeded-member-function -Wunreachable-code \
+	-Wunreachable-code-aggressive -Wunused -Wunused-const-variable \
+	-Wunused-function -Wunused-label -Wunused-lambda-capture \
+	-Wunused-local-typedef -Wunused-macros -Wunused-member-function \
+	-Wunused-parameter -Wunused-result -Wunused-variable -Wvexing-parse \
+	-Wzero-as-null-pointer-constant
 
 PTHREAD_FLAG:=-pthread
+COMPILER_OPTIMIZER:=-O1
+
 # https://clang.llvm.org/docs/ThreadSanitizer.html
 COMPILER_SANITIZE_THREAD_FLAG:=-fsanitize=thread
-COMPILER_OPTIMIZER:=-O1
 
 all: $(BINARY)
 
 $(BINARY): $(OBJECT_FILES)
-	$(CC) $(C_VERSION) $(COMPILER_OPTIMIZER) $(COMPILER_SANITIZE_THREAD_FLAG) $(COMPILER_FLAGS) $(GNU_SOURCE_SOCKETS) \
-  $(PTHREAD_FLAG) -o $@ $^ 
+	$(CC) $(C_VERSION) $(COMPILER_OPTIMIZER) $(COMPILER_SANITIZE_THREAD_FLAG) \
+		$(COMPILER_FLAGS) $(GNU_SOURCE_SOCKETS) $(PTHREAD_FLAG) -o $@ $^ 
 
 %.o:%.c  # DEPENDENCY_FILES will keep track of the .h files.
-	$(CC) $(C_VERSION) $(COMPILER_OPTIMIZER) $(COMPILER_SANITIZE_THREAD_FLAG) $(COMPILER_FLAGS) $(GNU_SOURCE_SOCKETS) \
-  $(PTHREAD_FLAG) $(INCLUDE_FILES) -c -o $@ $<
+	$(CC) $(C_VERSION) $(COMPILER_OPTIMIZER) $(COMPILER_SANITIZE_THREAD_FLAG) \
+		$(COMPILER_FLAGS) $(GNU_SOURCE_SOCKETS) $(PTHREAD_FLAG) $(INCLUDE_FILES) \
+		-c -o $@ $<
 
 clean:
 	rm -f $(BINARY) $(OBJECT_FILES) $(DEPENDENCY_FILES)

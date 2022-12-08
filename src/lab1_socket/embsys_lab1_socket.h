@@ -2,6 +2,8 @@
 #ifndef EMBSYS_LAB1_SOCKET_H_
 #define EMBSYS_LAB1_SOCKET_H_
 
+#include <../lab1_print/embys_lab1_print.h>
+
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netdb.h>
@@ -11,17 +13,42 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-static const int CONTINUE = -100;
-static const unsigned int MAX_CLIENT_DATA = 100;
-extern void* get_client_addr(struct sockaddr* ptr_client_addr);
-extern int set_server_protocol(struct addrinfo* ptr_server_protocols);
-extern int set_server_addr_info(struct addrinfo* ptr_server_protocols, struct addrinfo** ptr_server_info);
-extern int get_server_file_descriptor(int* server_file_descriptor, struct addrinfo* server_info);
-extern int close_communication(const int* file_descriptor);
-extern int set_listen(const int* server_file_descriptor);
-extern int set_client_file_descriptor(const int* server_file_descriptor, int* client_file_descriptor,
-                                      char* client_ip_addr);
-extern int get_client_data(const int* client_file_descriptor, char* client_data);
-extern int send_data_to_client(const int* client_file_descriptor, const char* data_to_send);
+typedef int file_descriptor;
+
+extern const int SOCKET_CONTINUE = -101;
+
+/* Length of the "data string" received. */
+extern const unsigned int MAX_CLIENT_DATA = 100;
+
+/* Define the Internet Protocols that the Server will use. */
+extern int set_server_protocol(struct addrinfo *protocols);
+
+/* Set the Server address structure and service name. */
+extern int set_server_addr_info(struct addrinfo *protocols,
+				struct addrinfo **server_info);
+
+/* Close communications and delete the file descriptor. */
+extern int close_communication(const file_descriptor *fd);
+
+/* Find a file descriptor for Server. */
+extern int get_server_file_descriptor(file_descriptor *server,
+				      struct addrinfo *server_info);
+
+/* Listen for connections on Server socket. */
+extern int set_listen(const file_descriptor *server);
+
+/*
+ * Accept a socket connection and therefore set the file descriptor and IP
+ * address of a Client.
+ */
+extern int set_client(const file_decriptor *server, file_descriptor *client,
+		      char *client_ip_addr);
+
+/* Get data from the Client. */
+extern int get_client_data(const file_descriptor *client, char *client_data);
+
+/* Send data to a Client. */
+extern int send_data_to_client(const file_descriptor *client,
+			       const char *data_to_send);
 
 #endif
