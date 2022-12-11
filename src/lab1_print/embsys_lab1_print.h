@@ -3,8 +3,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-extern int stderr_print(char *str);
-extern int stdout_print(char *str);
+extern int stderr_print(char* str);
+extern int stdout_print(char* str);
 
 #endif

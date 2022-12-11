@@ -5,8 +5,8 @@
       "/usr/bin/clang",
       "-std=iso9899:1999",
       "-D_GNU_SOURCE -Wall -Wextra",
-      "-I/src/lab1_socket/embsys_lab1_socket.h",
-      "-I/lab1_error_message/embsys_lab1_error_message.h",
+      "-I/lab1_socket/embsys_lab1_socket.h",
+      "-I/lab1_print/embsys_lab1_print.h",
       "-o",
       "PedroR_lab1"
     ],
@@ -19,7 +19,7 @@
       "-std=iso9899:1999",
       "-D_GNU_SOURCE -Wall -Wextra, -pedantic",
       "-I/src/lab1_socket/embsys_lab1_socket.h",
-      "-I/src/lab1_error_message/embsys_lab1_error_message.h",
+      "-I/lab1_print/embsys_lab1_print.h",
       "src/lab1_socket/embsys_lab1_socket.c",
       "-o",
       "src/lab_socket/lab_socket.o"
@@ -33,11 +33,11 @@
       "-std=iso9899:1999",
       "-D_GNU_SOURCE -Wall -Wextra, -pedantic",
       "-I/src/lab1_socket/embsys_lab1_socket.h",
-      "-I/src/lab1_error_handler/embsys_lab1_error_handler.h",
-      "src/lab1_error_handler/embsys_lab1_error_message.c",
+      "-I/lab1_print/embsys_lab1_print.h",
+      "src/lab1_print/embsys_lab1_print.c",
       "-o",
-      "src/lab1_error_message/embsys_lab1_error_message.o"
+      "src/lab1_print/embsys_lab1_print.o"
     ],
-    "file": "src/lab1_error_message/embsys_lab1_error_message.c"
+    "file": "src/lab1_print/lab1_print.c"
   }
 ]

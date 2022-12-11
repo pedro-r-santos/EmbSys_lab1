@@ -1,8 +1,0 @@
-# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
-BasedOnStyle: Google
-Language: Cpp
-ColumnLimit: 120
-# Force int* foo spacing style:
-DerivePointerAlignment: false
-PointerAlignment: Left
-AllowShortFunctionsOnASingleLine: Inline
