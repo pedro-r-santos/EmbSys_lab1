@@ -15,5 +15,5 @@ extern int stdout_print(char* str) {
     perror(str);
     return EXIT_FAILURE;
   }
-  return EXIT_FAILURE;
+  return EXIT_SUCCESS;
 }

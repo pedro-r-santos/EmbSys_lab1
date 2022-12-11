@@ -36,7 +36,7 @@ COMPILER_FLAGS:=-g -pedantic -Wall -Wextra -Walloca -Wanon-enum-enum-conversion 
 	-Winvalid-or-nonexistent-directory -Wlogical-op-parentheses -Wmethod-signatures -Wmisleading-indentation \
 	-Wmissing-braces -Wmissing-field-initializers -Wmissing-method-return-type -Wmissing-noreturn -Wmissing-prototypes \
 	-Wmissing-variable-declarations -Wmost -Wnewline-eof -Wnonportable-system-include-path -Wnull-pointer-arithmetic \
-	-Wnull-pointer-subtraction -Wnullable-to-nonnull-conversion -Wobjc-signed-char-bool-implicit-int-conversion 
+	-Wnull-pointer-subtraction -Wnullable-to-nonnull-conversion -Wobjc-signed-char-bool-implicit-int-conversion \
 	-Wover-aligned -Woverriding-method-mismatch -Wparentheses -Wpedantic -Wpointer-arith -Wpoison-system-directories \
 	-Wredundant-parens -Wreserved-macro-identifier -Wreturn-stack-address -Rsanitize-address -Wself-assign \
 	-Wself-assign-overloaded -Wself-move -Wshift-sign-overflow -Wshorten-64-to-32 -Wsign-compare -Wsign-conversion \

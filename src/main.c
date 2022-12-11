@@ -17,7 +17,7 @@
 #include "lab1_socket/embsys_lab1_socket.h"
 
 /* Close and free the socket and other resources associated with *server. */
-inline void close_server(file_descriptor* server) {
+static inline void close_server(file_descriptor* server) {
   /* Close the Server socket. */
   close_communication(server);
   /* Free the file descriptor malloced memory. */
@@ -99,32 +99,26 @@ static int server_listening_loop(file_descriptor* server) {
   int return_value = 0;
 
   while (true) {
-    if (printf("SERVER -> waiting for connections...\n") < 0) {
-      perror(
-          "Error: SERVER -> listening_mode : "
-          "printf() \n");
+    if (stdout_print("SERVER  -> listening for connections...\n") == EXIT_FAILURE) {
       close_server(server);
       return EXIT_FAILURE;
     }
-
-    /* Accept an incoming connection. */
+    // Accept an incoming connection.
     return_value = accept_incoming_connection(server, client, client_ip_addr);
-
-    if (return_value == CONTINUE) {
+    if (return_value == SOCKET_CONTINUE_LISTENING) {
       continue;
-    } else if (return_value == EXIT_FAILURE) {
-      return EXIT_FAILURE;
     }
-
-    /* Get data from Client. */
-    return_value = receive_client_data(server, client_ip_addr, client, client_data);
-
     if (return_value == EXIT_FAILURE) {
       return EXIT_FAILURE;
-    } else if (return_value == CONTINUE) {
+    }
+    /* Get data from Client. */
+    return_value = receive_client_data(server, client_ip_addr, client, client_data);
+    if (return_value == EXIT_FAILURE) {
+      return EXIT_FAILURE;
+    }
+    if (return_value == SOCKET_CONTINUE_LISTENING) {
       continue;
     }
-
     /* Send data to Client. */
     const char* data_to_client = "General Kenobi!";
     return_value = send_client_data(server, client_ip_addr, client, data_to_client);

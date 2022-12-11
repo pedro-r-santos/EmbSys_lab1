@@ -12,22 +12,31 @@
 
 static const int BIND_ERROR_CONTINUE = -100;
 
-/* Returns the client IP address ( IP v.4 or v.6 ). */
+/**
+ * @brief Returns the Client IP address (v.4 or v.6).
+ *
+ * @param client_addr
+ * @return void*
+ */
 static void* get_client_ip_addr(struct sockaddr* client_addr) {
   return (client_addr->sa_family == AF_INET)
-             ? (void*)&((struct sockaddr_in*)client_addr)->sin_addr    /* IP version 4 address. */
-             : (void*)&((struct sockaddr_in6*)client_addr)->sin6_addr; /* IP version 6 address. */
+             ? (void*)&((struct sockaddr_in*)client_addr)->sin_addr     // IP version 4 address.
+             : (void*)&((struct sockaddr_in6*)client_addr)->sin6_addr;  // IP version 6 address.
 }
 
-/* Bind the Server file descriptor to the Server IP address. */
+/**
+ * @brief Bind the Server file descriptor to the Server IP address.
+ *
+ * @param server
+ * @param server_info
+ * @return int
+ */
 static int set_bind(const file_descriptor* server, struct addrinfo* server_info) {
-  /*
-   * Associate a file descriptor with an IP address (given by the OS)
-   * and a port number (defined by SERVER_PORT) to our Server.
-   */
+  // Associate a file descriptor with an IP address (given by the OS) and a port number (defined by SERVER_PORT) to our
+  // Server.
   if (bind(*server, server_info->ai_addr, server_info->ai_addrlen) == -1) {
     perror("Error: SERVER -> bind() ");
-    /* Close open Socket with this file descriptor and delete it. */
+    // Close open Socket with this file descriptor and delete it.
     if (close_communication(server) == EXIT_FAILURE) {
       return EXIT_FAILURE;
     }
@@ -90,9 +99,10 @@ extern int set_server_protocol(struct addrinfo* protocols) {
 extern int set_server_addr_info(struct addrinfo* protocols, struct addrinfo** server_info) {
   /* getaddrinfo() will return information on our host and load up the struct sockaddr. */
   const char* SERVER_PORT = "65432";
-  if (getaddrinfo(NULL, SERVER_PORT, protocols, server_info) != 0) {
+  int return_value = getaddrinfo(NULL, SERVER_PORT, protocols, server_info);
+  if (return_value != 0) {
     /* gai_strerror(), prints error message string from the EAI_xxx error code. */
-    int return_value = fprintf(stderr, "Error: SERVER -> getaddrinfo() : %s\n", gai_strerror(return_value));
+    return_value = fprintf(stderr, "Error: SERVER -> getaddrinfo() : %s\n", gai_strerror(return_value));
     if (return_value < 0) {
       perror("Error: SERVER -> getaddrinfo() : fprintf() ");
     }
