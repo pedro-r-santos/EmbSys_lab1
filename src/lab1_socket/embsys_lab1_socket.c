@@ -2,6 +2,7 @@
 
 #include <netdb.h>
 #include <pthread.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -180,7 +181,7 @@ static int set_client(const file_descriptor* server, file_descriptor* client, ch
  * @param client_data string that will store the client data.
  * @return int  EXIT_SUCCESS if the recv() was successful, EXIT_FAILURE otherwise.
  */
-inline int get_client_data(const file_descriptor* client, char* client_data) {
+static int get_client_data(const file_descriptor* client, char* client_data) {
   // The maximum number of bytes that can be received is MAX_CLIENT_DATA - 1. The last byte is reserved for the null
   // terminator. The recv() function returns the number of bytes received. If the number of bytes received is -1, the
   // recv() function failed. If the number of bytes received is 0, the client has closed the connection.
@@ -369,36 +370,35 @@ extern int receive_client_data(file_descriptor* server, const char* client_ip_ad
  * @brief Send data to the client. If the send() fails, returns EXIT_FAILURE and the program should end.
  * Otherwise, the function returns EXIT_SUCCESS.
  *
- * @param client file descriptor.
- * @param data_to_send string that will be sent to the client.
- * @return int EXIT_SUCCESS if the send() was successful, EXIT_FAILURE otherwise.
+ * @param server  file descriptor.
+ * @param client_ip_address address of the client
+ * @param client file descriptor
+ * @param data_to_client data to send to the client
+ * @return int EXIT_SUCCESS if the send_data_to_client() was successful, EXIT_FAILURE otherwise.
  */
-extern int send_data_to_client(const file_descriptor* client, const char* data_to_send) {
+extern int send_data_to_client(file_descriptor* server, const char* client_ip_address, file_descriptor* client,
+                               const char* data_to_client) {
   // The send() function returns the number of bytes sent. If the number of bytes sent is -1, the send() function
   // failed. If the number of bytes sent is 0, the client has closed the connection. The send() function sends data only
   // to a socket in a connected state.
-  ssize_t return_value = send(*client, data_to_send, strlen(data_to_send), 0);
+  ssize_t return_value = send(*client, data_to_client, strlen(data_to_client), 0);
+  bool failed_to_send_data = false;
   if (return_value == -1) {
     perror("Error: SERVER -> send() failed ");
-    return EXIT_FAILURE;
+    failed_to_send_data = true;
   }
   if (return_value == 0) {
     perror("Error: SERVER -> send() closed connection ");
-    return EXIT_FAILURE;
+    failed_to_send_data = true;
   }
-  return EXIT_SUCCESS;
-}
-/* Send data to Client. */
-extern int send_client_data(file_descriptor* server, const char* client_ip_address, file_descriptor* client,
-                            const char* data_to_client) {
-  if (send_data_to_client(client, data_to_client) == EXIT_FAILURE) {
+  if (failed_to_send_data) {
     int return_value =
         fprintf(stderr, "Error: SERVER -> unable to send data to -> %s\n\tClosing communication with client",
                 client_ip_address);
     if (return_value < 0) {
-      perror("Error: SERVER -> listening_mode : printf() ");
+      perror("Error: SERVER -> send_data_to_client() : printf() ");
     }
-    /* The communication with this Client is corrupted, we are unable to send data. */
+    // The communication with this client is corrupted, we are unable to send data.
     close_communication(client);
     close_socket(server);
     return EXIT_FAILURE;

@@ -18,12 +18,12 @@
 
 /* The Server is always listening for new connections. */
 static int server_listening_loop(file_descriptor* server) {
-  file_descriptor* client = malloc(sizeof(int));
-  char* client_ip_addr = malloc(sizeof(char) * INET6_ADDRSTRLEN);  // IPv4 fits in IPv6.
-  char* client_data = malloc(sizeof(char) * MAX_CLIENT_DATA);
   int return_value = 0;
   bool listening = true;
   while (listening) {
+    file_descriptor* client = malloc(sizeof(int));
+    char* client_ip_addr = malloc(sizeof(char) * INET6_ADDRSTRLEN);  // IPv4 fits in IPv6.
+    char* client_data = malloc(sizeof(char) * MAX_CLIENT_DATA);
     if (stdout_print("SERVER  -> listening for connections...\n") == EXIT_FAILURE) {
       close_socket(server);
       return EXIT_FAILURE;
@@ -46,14 +46,15 @@ static int server_listening_loop(file_descriptor* server) {
     }
     // Send data to the Client.
     const char* data_to_client = "General Kenobi!";
-    return_value = send_client_data(server, client_ip_addr, client, data_to_client);
+    return_value = send_data_to_client(server, client_ip_addr, client, data_to_client);
     if (return_value == EXIT_FAILURE) {
       return EXIT_FAILURE;
     }
-    close_socket(client);
+    close_socket(client);  // malloced memory is freed in close_socket().
+    free(client_ip_addr);
+    free(client_data);
+    listening = false;
   }
-  free(client_ip_addr);
-  free(client_data);
   return EXIT_SUCCESS;
 }
 
