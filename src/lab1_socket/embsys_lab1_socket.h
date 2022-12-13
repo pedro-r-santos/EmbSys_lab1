@@ -13,81 +13,108 @@
 
 #include "../lab1_print/embsys_lab1_print.h"
 
-typedef int file_descriptor;
-
-/* Keep listening. */
-static const int SOCKET_CONTINUE_LISTENING = -101;
-
-/* Length of the "data string" received. */
-static const unsigned int MAX_CLIENT_DATA = 100;
+/*****************************************************************************/
+/*************************** Variables ***************************************/
+/*****************************************************************************/
 
 /**
- * @brief This function will find a file descriptor for the server. The server will be able to accept connections from
- * clients, send and receive messages and close communications. If the function fails, it returns a EXIT_FAILURE
- * and the program is ended. Otherwise, the function returns EXIT_SUCCESS.
+ * @brief The file descriptor type. This is used to represent a socket. Makes the code more readable. It
+ * is not necessary to use this type, you can use int instead.
+ */
+typedef int file_descriptor;
+
+/**
+ * @brief The server port to connect to.
+ */
+extern const char* const SERVER_PORT;
+
+/**
+ * @brief The SERVER_BACKLOG is the maximum number of connections that the kernel should queue for this socket. The
+ * maximum value for this parameter is SOMAXCONN. The minimum value is 1. The default value in this implementation is
+ * 128.
+ */
+extern const int SERVER_BACKLOG;
+
+/**
+ * @brief  This is the maximum number of bytes that can be received from a client.
+ */
+extern const unsigned int MAX_CLIENT_DATA;
+
+/**
+ * @brief The server must keep listening for incoming connections.§
+ */
+extern const int SOCKET_CONTINUE_LISTENING;
+
+/*****************************************************************************/
+/*************************** Functions ***************************************/
+/*****************************************************************************/
+
+/**
+ * @brief This function will create a server file descriptor. If the function fails, returns EXIT_FAILURE, otherwise
+ * returns EXIT_SUCCESS.
  *
- * @param server file descriptor.
- * @return int EXIT_SUCCESS if the function was successful, EXIT_FAILURE otherwise.
+ * @param server file descriptor. This is a pointer to a structure of type file_descriptor.
+ * @return int EXIT_FAILURE if the function fails, otherwise returns EXIT_SUCCESS.
  */
 extern int get_server_file_descriptor(file_descriptor* server);
 
 /**
- * @brief Set the server to listen for incoming connections. If the listen() fails, returns EXIT_FAILURE and the
- * program should end. Otherwise, the function returns EXIT_SUCCESS.
+ * @brief This function will set the server to listen for incoming connections. The SERVER_BACKLOG parameter defines
+ + the maximum length to which the queue of pending connections may grow. If the function fails, returns EXIT_FAILURE,
+ * otherwise returns EXIT_SUCCESS.
  *
- * @param server file descriptor. The server will be able to accept connections from clients.
- * @return int EXIT_SUCCESS if the listen() was successful, EXIT_FAILURE otherwise.
+ * @param server file descriptor. This is a pointer to a structure of type file_descriptor.
+ * @return int EXIT_FAILURE if the function fails, otherwise returns EXIT_SUCCESS.
  */
-extern int set_listen(const file_descriptor* server);
-
-/**
- * @brief Close the communication and delete the file descriptor. If the close() fails, the program is ended.
- *
- * @param open_socket file descriptor. The file descriptor is deleted.
- * @return int EXIT_SUCCESS if the close() was successful, EXIT_FAILURE otherwise.
- */
-extern int close_communication(const file_descriptor* open_socket);
+extern int set_server_listen(file_descriptor* server);
 
 /**
  * @brief Close the socket connection. And free the file descriptor malloced memory.
  *
- * @param server file descriptor.
+ * @param open_socket file descriptor. This is a pointer to a structure of type file_descriptor.
+ * @return int EXIT_FAILURE if the function fails, otherwise returns EXIT_SUCCESS.
  */
-extern void close_socket(file_descriptor* open_socket);
+extern int close_socket(file_descriptor* open_socket);
 
 /**
- * @brief Accept a socket connection and therefore set the file descriptor and IP address of a client.
+ * @brief This function will accept an incoming connection. If the function fails to get the client file descriptor
+ * returns SOCKET_CONTINUE_LISTENING, if a system error occurs returns EXIT_FAILURE, otherwise returns
+ * EXIT_SUCCESS. If the function fails, the client file descriptor will be closed and freed and the client_ip_address
+ * will be freed. If the function succeeds, the client file descriptor and IP address will be known.
  *
- * @param server file descriptor.
- * @param client file descriptor.
- * @param client_ip_address string that will store the client IP address.
- * @return int EXIT_SUCCESS if the set_client() was successful, SOCKET_CONTINUE_LISTENING otherwise. If it fails to get
- * the client IP address, returns EXIT_FAILURE.
+ * @param server file descriptor. This is a pointer to a structure of type file_descriptor.
+ * @param client file descriptor. This is a pointer to a structure of type file_descriptor.
+ * @param client_ip_address client IP address. This is a pointer of type char.
+ * @return int SOCKET_CONTINUE_LISTENING if the function fails to get the file descriptor, EXIT_FAILURE if a system
+ * error occurs, otherwise returns EXIT_SUCCESS.
  */
 extern int accept_incoming_connection(file_descriptor* server, file_descriptor* client, char* client_ip_address);
 
 /**
- * @brief Receive data from the client.
+ * @brief This function will receive data from a client. If the function fails to receive data returns
+ * SOCKET_CONTINUE_LISTENING, if a system error occurs returns EXIT_FAILURE, otherwise returns EXIT_SUCCESS. If the
+ * function fails, the client file descriptor will be closed and freed, if the failure happens because of the system
+ * the server will also be closed and freed. If the function succeeds, data send by the client will be known.
  *
- * @param server  file descriptor.
- * @param client_ip_address  client IP address.
- * @param client  file descriptor.
- * @param client_data   string that will store the data received from the client.
- * @return int EXIT_SUCCESS if the get_client_data() was successful, SOCKET_CONTINUE_LISTENING otherwise. If the
- * system fails to perform some action, returns EXIT_FAILURE.
+ * @param server file descriptor.
+ * @param client_ip_address client IP address.
+ * @param client file descriptor.
+ * @param client_data client data.
+ * @return int SOCKET_CONTINUE_LISTENING if the function fails to receive data, EXIT_FAILURE if a system error occurs,
+ * otherwise returns EXIT_SUCCESS.
  */
 extern int receive_client_data(file_descriptor* server, const char* client_ip_address, file_descriptor* client,
                                char* client_data);
 
 /**
- * @brief Send data to the client. If the send() fails, returns EXIT_FAILURE and the program should end.
- * Otherwise, the function returns EXIT_SUCCESS.
+ * @brief This function will send data to a client. If the function fails to send data returns EXIT_FAILURE, otherwise
+ * returns EXIT_SUCCESS. If the function fails, the client and server file descriptor will be closed and freed.
  *
- * @param server  file descriptor.
- * @param client_ip_address address of the client
- * @param client file descriptor
- * @param data_to_client data to send to the client
- * @return int EXIT_SUCCESS if the send_data_to_client() was successful, EXIT_FAILURE otherwise.
+ * @param server file descriptor.
+ * @param client_ip_address client IP address.
+ * @param client file descriptor.
+ * @param data_to_client data to send to client.
+ * @return int EXIT_FAILURE if the function fails to send data, otherwise returns EXIT_SUCCESS.
  */
 extern int send_data_to_client(file_descriptor* server, const char* client_ip_address, file_descriptor* client,
                                const char* data_to_client);
