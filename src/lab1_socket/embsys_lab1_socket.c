@@ -217,7 +217,7 @@ extern int get_server_file_descriptor(file_descriptor* server) {
 extern int set_server_listen(file_descriptor* server) {
   if (listen(*server, SERVER_BACKLOG) == -1) {
     perror("Error: SERVER -> listen() ");
-    close_socket(server);
+    (void)close_socket(server);
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
@@ -261,27 +261,27 @@ extern int accept_incoming_connection(file_descriptor* server, file_descriptor* 
   if (*client == -1) {
     perror("Error: SERVER -> accept_incoming_connection() -> accept() ");
     if (close_socket(client) == EXIT_FAILURE) {
+      (void)close_socket(server);
       exit_failure = true;
     }
-    free(client_ip_address);
     return exit_failure ? EXIT_FAILURE : SOCKET_CONTINUE_LISTENING;
   }
   // Get the client IP address, in binary form (network byte order).
   void* _clnt_ip_addr = get_client_ip_addr((struct sockaddr*)&client_address);
   // Transform the IP address to a presentation format ("human readable").
-  if (inet_ntop(client_address.ss_family, _clnt_ip_addr, client_ip_address, sizeof client_ip_address) !=
+  if (inet_ntop(client_address.ss_family, _clnt_ip_addr, client_ip_address, sizeof client_ip_address) ==
       NULL) {  // inet_ntop() failed, it's a system error, close server.
     perror("Error: SERVER -> accept_incoming_connection() -> inet_ntop() ");
-    close_socket(client);  // No need to check the return value, we are shutting down the server.
-    close_socket(server);
+    (void)close_socket(client);
+    (void)close_socket(server);
     return EXIT_FAILURE;
   }
   int return_value =
       printf("Receive a connection from : %s\n\t ( its file descriptor : %d )\n", client_ip_address, *client);
   if (return_value < 0) {  // printf() failed, it's a system error, close server.
     perror("Error: SERVER -> accept_incoming_connection() -> printf() ");
-    close_socket(client);  // No need to check the return value, we are shutting down the server.
-    close_socket(server);
+    (void)close_socket(client);
+    (void)close_socket(server);
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
@@ -322,9 +322,11 @@ extern int receive_client_data(file_descriptor* server, const char* client_ip_ad
     if (return_value < 0) {
       exit_failure = true;
     }
-    close_socket(client);
+    if (close_socket(client) == EXIT_FAILURE) {
+      exit_failure = true;
+    }
     if (exit_failure) {
-      close_socket(server);
+      (void)close_socket(server);
       return EXIT_FAILURE;
     }
     return SOCKET_CONTINUE_LISTENING;
@@ -356,7 +358,7 @@ extern int send_data_to_client(file_descriptor* server, const char* client_ip_ad
     error_str = return_value == -1
                     ? "Error: SERVER -> send_data_to_client() -> send() failed "
                     : "Error: SERVER -> send_data_to_client() -> send() client has closed the connection ";
-    (void)stderr_print(error_str);  // We don't care if the function fails, we are shutting down the server.
+    (void)stderr_print(error_str);
     exit_failure = true;
   }
   if (exit_failure) {
@@ -366,8 +368,8 @@ extern int send_data_to_client(file_descriptor* server, const char* client_ip_ad
     if (return_value < 0) {
       perror("Error: SERVER -> send_data_to_client() : fprintf() ");
     }
-    close_socket(client);
-    close_socket(server);
+    (void)close_socket(client);
+    (void)close_socket(server);
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
