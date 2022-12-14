@@ -1,6 +1,7 @@
 
 #include "embsys_lab1_queue.h"
 
+#include <assert.h>
 #include <bits/pthreadtypes.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -8,7 +9,7 @@
 
 static int queue_mutex(queue_t* queue) {
   // allocate memory for the mutex
-  queue->mutex = malloc(sizeof(pthread_mutex_t));
+  queue->mutex = calloc((size_t)1, sizeof(pthread_mutex_t));
   if (queue->mutex == NULL) {
     perror("ERROR: QUEUE -> queue_create() -> malloc() failed to allocate memory for the mutex ");
     return EXIT_FAILURE;
@@ -55,12 +56,36 @@ extern int queue_create(queue_t* queue) {
   // zero size
   queue->size = 0;
   // initialize the mutex
-  if (queue_mutex(queue) == EXIT_FAILURE) {
-    perror("ERROR: QUEUE -> queue_create() -> queue_mutex() failed to initialize the mutex ");
-    free(queue);
-    queue = NULL;
+  // if (queue_mutex(queue) == EXIT_FAILURE) {
+  //   perror("ERROR: QUEUE -> queue_create() -> queue_mutex() failed to initialize the mutex ");
+  //   free(queue);
+  //   queue = NULL;
+  //   return EXIT_FAILURE;
+  // }
+  // queue->mutex = calloc((size_t)1, sizeof(pthread_mutex_t));
+  // if (queue->mutex == NULL) {
+  //   perror("ERROR: QUEUE -> queue_create() -> malloc() failed to allocate memory for the mutex ");
+  //   return EXIT_FAILURE;
+  // }
+  // allocate memory for mutex attributes
+  queue->mutex_attr = malloc(sizeof(pthread_mutexattr_t));
+  if (queue->mutex_attr == NULL) {
+    perror("ERROR: QUEUE -> queue_create() -> malloc() failed to allocate memory for the mutex attributes ");
+    free(queue->mutex);
+    queue->mutex = NULL;
     return EXIT_FAILURE;
   }
+  if (pthread_mutexattr_init(queue->mutex_attr) != 0) {
+    perror("ERROR: QUEUE -> queue_create() -> pthread_mutexattr_init() failed to initialize the mutex attributes ");
+  }
+  // If a thread attempts to relock without first unlocking or unlock a mutex that is unlocked, it will return an error.
+  if (pthread_mutexattr_settype(queue->mutex_attr, PTHREAD_MUTEX_ERRORCHECK) != 0) {
+    perror("ERROR: QUEUE -> queue_create() -> pthread_mutexattr_settype() failed to set the mutex attributes ");
+  }
+  if (pthread_mutex_init(queue->mutex, queue->mutex_attr) != 0) {
+    perror("ERROR: QUEUE -> queue_create() -> pthread_mutex_init() failed to initialize the mutex ");
+  }
+  assert(queue->mutex != NULL);
   // initialize the condition variable
   queue->not_empty = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
   return EXIT_SUCCESS;

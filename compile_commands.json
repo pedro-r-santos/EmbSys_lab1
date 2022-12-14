@@ -8,6 +8,7 @@
       "-I/lab1_socket/embsys_lab1_socket.h",
       "-I/lab1_print/embsys_lab1_print.h",
       "-I/lab1_queue/embsys_lab1_queue.h",
+      "-I/lab1_thread_work/embsys_lab1_thread_work.h",
       "-o",
       "PedroR_lab1"
     ],
@@ -22,6 +23,7 @@
       "-I/src/lab1_socket/embsys_lab1_socket.h",
       "-I/lab1_print/embsys_lab1_print.h",
       "-I/lab1_queue/embsys_lab1_queue.h",
+      "-I/lab1_thread_work/embsys_lab1_thread_work.h",
       "src/lab1_socket/embsys_lab1_socket.c",
       "-o",
       "src/lab_socket/lab_socket.o"
@@ -37,6 +39,7 @@
       "-I/src/lab1_socket/embsys_lab1_socket.h",
       "-I/lab1_print/embsys_lab1_print.h",
       "-I/lab1_queue/embsys_lab1_queue.h",
+      "-I/lab1_thread_work/embsys_lab1_thread_work.h",
       "src/lab1_print/embsys_lab1_print.c",
       "-o",
       "src/lab1_print/embsys_lab1_print.o"
@@ -52,10 +55,27 @@
       "-I/src/lab1_socket/embsys_lab1_socket.h",
       "-I/lab1_print/embsys_lab1_print.h",
       "-I/lab1_queue/embsys_lab1_queue.h",
+      "-I/lab1_thread_work/embsys_lab1_thread_work.h",
       "src/lab1_queue/embsys_lab1_queue.c",
       "-o",
       "src/lab1_queue/embsys_lab1_queue.o"
     ],
     "file": "src/lab1_queue/embsys_lab1_queue.c"
+  },
+  {
+    "directory": "/usr/lib/llvm-13/",
+    "arguments": [
+      "/usr/bin/clang",
+      "-std=iso9899:1999",
+      "-D_GNU_SOURCE -Wall -Wextra, -pedantic",
+      "-I/src/lab1_socket/embsys_lab1_socket.h",
+      "-I/lab1_print/embsys_lab1_print.h",
+      "-I/lab1_queue/embsys_lab1_queue.h",
+      "-I/lab1_thread_work/embsys_lab1_thread_work.h",
+      "src/lab1_thread_work/embsys_lab1_thread_work.c",
+      "-o",
+      "src/lab1_thread_work/embsys_lab1_thread_work.o"
+    ],
+    "file": "src/lab1_thread_work/embsys_lab1_thread_work.c"
   }
 ]

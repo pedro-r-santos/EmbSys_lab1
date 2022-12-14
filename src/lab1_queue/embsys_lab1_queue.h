@@ -3,14 +3,14 @@
 
 #include <pthread.h>
 
-typedef struct queue_struct_t queue_struct_t;
+// typedef struct queue_struct_t queue_struct_t;
 
-struct queue_struct_t {
+typedef struct queue_struct_t {
   void* data;
-  queue_struct_t* next;
-};
+  struct queue_struct_t* next;
+} queue_struct_t;
 
-typedef struct {
+typedef struct queue_t {
   int* data;
   int size;  // size of the queue
   queue_struct_t* head;
