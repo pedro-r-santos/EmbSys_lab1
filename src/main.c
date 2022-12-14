@@ -23,60 +23,73 @@ static void server_waiting_for_client(void) {
   (void)stdout_print("SERVER  -> listening for connections...\n");
 }
 
+typedef struct {
+  file_descriptor* server;
+  file_descriptor* client;
+  char* client_ip_address;
+  char* client_data;
+} thread_client;
+
+static void* client_communication(void* ptr_thread_client) {
+  thread_client* client_data = (thread_client*)ptr_thread_client;
+  int* FAIL = malloc(sizeof(int));
+  *FAIL = EXIT_FAILURE;
+  while (1) {
+    // Retrieve the data send by a client.
+    int return_value =
+        receive_client_data(client_data->client_ip_address, client_data->client, client_data->client_data);
+    if (return_value == EXIT_FAILURE) {
+      (void)fprintf(
+          stderr,
+          "Error: SERVER  ->  client_communication() ->  receive_client_data() unable to receive data from '%s'\n",
+          client_data->client_ip_address);
+      return (void*)FAIL;
+    }
+    for (unsigned long i = 0; i < strlen(client_data->client_data); i++) {
+      if (client_data->client_data[i] == '\0' || client_data->client_data[i] == '\n') {
+        puts(" new line \n");
+      }
+      printf("%c", client_data->client_data[i]);
+    }
+  }
+}
+
 /* The Server is always listening for new connections. */
 static int server_listening_loop(file_descriptor* server) {
-  int return_value = 0;
-  bool listening = true;
-  while (listening) {
-    file_descriptor* client = malloc(sizeof(int));
-    char* client_ip_addr = malloc(sizeof(char) * INET6_ADDRSTRLEN);  // IPv4 fits in IPv6.
-    char* client_data = malloc(sizeof(char) * MAX_CLIENT_DATA);
+  while (1) {
+    thread_client* client_data = malloc(sizeof(thread_client));
+    client_data = &(((thread_client){
+        .server = server,
+        .client = malloc(sizeof(int)),
+        .client_ip_address = malloc(sizeof(char) * INET6_ADDRSTRLEN),  // IPv4 fits in IPv6.
+        .client_data = malloc(sizeof(char) * MAX_CLIENT_DATA),
+    }));
     // Welcoming text.
     server_waiting_for_client();
     // Accept an incoming connection.
-    return_value = accept_incoming_connection(server, client, client_ip_addr);
-    if (return_value == SOCKET_CONTINUE_LISTENING || return_value == EXIT_FAILURE) {
-      // client is closed and freed in receive_client_data().
-      listening = !(return_value == EXIT_FAILURE);
-      goto STOP_LISTENING;
+    int return_value = accept_incoming_connection(server, client_data->client, client_data->client_ip_address);
+    if (return_value == SOCKET_CONTINUE_LISTENING) {
+      continue;
     }
-    // Retrieve the data send by a client.
-    return_value = receive_client_data(server, client_ip_addr, client, client_data);
-    if (return_value == SOCKET_CONTINUE_LISTENING || return_value == EXIT_FAILURE) {
-      // client is closed and freed in receive_client_data().
-      listening = !(return_value == EXIT_FAILURE);
-      goto STOP_LISTENING;
-    }
-    // Print received data
-    if (printf("SERVER  -> received data from client -> %s : '%s'\n", client_ip_addr, client_data) < 0) {
-      close_socket(client);
-      close_socket(server);
-      listening = false;
-      goto STOP_LISTENING;
-    }
-    // Send data to the Client.
-    const char* data_to_client = "General Kenobi!";
-    return_value = send_data_to_client(server, client_ip_addr, client, data_to_client);
     if (return_value == EXIT_FAILURE) {
-      // client is closed and freed in send_data_to_client().
-      listening = false;
-      goto STOP_LISTENING;
-    }
-    close_socket(client);  // malloced memory is freed in close_socket().
-  STOP_LISTENING:
-    if (listening == false) {
-      free(client_ip_addr);
-      free(client_data);
+      free(client_data->client_ip_address);
+      free(client_data->client_data);
+      close_socket(client_data->client);
       return EXIT_FAILURE;
     }
-    free(client_ip_addr);
-    free(client_data);
-
-// TODO: TEST -> Remove this.
-#define EXIT_LOOP_AFTER_5_CONNECTIONS 5
-    static int i = 0;
-    if (++i == EXIT_LOOP_AFTER_5_CONNECTIONS) {
-      listening = false;
+    // The lab. specifies that we should only accept one connection. So we wait for the client to close the connection.
+    pthread_t listening_thread = 0;
+    pthread_create(&listening_thread, NULL, client_communication, (void*)client_data);
+    int* thread_return = NULL;
+    pthread_join(listening_thread, (void**)&thread_return);
+    if (*thread_return == EXIT_FAILURE) {
+      close_socket(client_data->client);
+      free(client_data->client_ip_address);
+      free(client_data->client_data);
+      free(client_data->client);
+      // free(client_data.server);
+      free(thread_return);
+      continue;  // We don't want to close the server.
     }
   }  // while (listening)
   return EXIT_SUCCESS;
@@ -91,15 +104,18 @@ int main(void) {
   }
   // Bind the socket to an address.
   if (set_server_listen(server) == EXIT_FAILURE) {
-    close_socket(server);
+    free(server);
     return EXIT_FAILURE;
   }
   // Listen for connections. If we got one accept it. If we got data from the client, work with it. If we want to send
   // data to the client, do it.
   if (server_listening_loop(server) == EXIT_FAILURE) {
+    close_socket(server);
+    free(server);
     return EXIT_FAILURE;
   }
   // Close the socket. Free the resources. Exit.
   close_socket(server);
+  free(server);
   return EXIT_SUCCESS;
 }

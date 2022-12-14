@@ -74,7 +74,7 @@ extern int set_server_listen(file_descriptor* server);
  * @param open_socket file descriptor. This is a pointer to a structure of type file_descriptor.
  * @return int EXIT_FAILURE if the function fails, otherwise returns EXIT_SUCCESS.
  */
-extern int close_socket(file_descriptor* open_socket);
+extern int close_socket(const file_descriptor* open_socket);
 
 /**
  * @brief This function will accept an incoming connection. If the function fails to get the client file descriptor
@@ -88,7 +88,7 @@ extern int close_socket(file_descriptor* open_socket);
  * @return int SOCKET_CONTINUE_LISTENING if the function fails to get the file descriptor, EXIT_FAILURE if a system
  * error occurs, otherwise returns EXIT_SUCCESS.
  */
-extern int accept_incoming_connection(file_descriptor* server, file_descriptor* client, char* client_ip_address);
+extern int accept_incoming_connection(const file_descriptor* server, file_descriptor* client, char* client_ip_address);
 
 /**
  * @brief This function will receive data from a client. If the function fails to receive data returns
@@ -103,8 +103,7 @@ extern int accept_incoming_connection(file_descriptor* server, file_descriptor* 
  * @return int SOCKET_CONTINUE_LISTENING if the function fails to receive data, EXIT_FAILURE if a system error occurs,
  * otherwise returns EXIT_SUCCESS.
  */
-extern int receive_client_data(file_descriptor* server, const char* client_ip_address, file_descriptor* client,
-                               char* client_data);
+extern int receive_client_data(const char* client_ip_address, const file_descriptor* client, char* client_data);
 
 /**
  * @brief This function will send data to a client. If the function fails to send data returns EXIT_FAILURE, otherwise
