@@ -16,43 +16,13 @@
 #include "lab1_print/embsys_lab1_print.h"
 #include "lab1_queue/embsys_lab1_queue.h"
 #include "lab1_socket/embsys_lab1_socket.h"
+#include "lab1_thread_work/embsys_lab1_thread_work.h"
 
 #define BAR "********************************************************************************\n"
 
 static void server_waiting_for_client(void) {
   (void)stdout_print(BAR);
   (void)stdout_print("SERVER  -> listening for connections...\n");
-}
-
-typedef struct {
-  file_descriptor* server;
-  file_descriptor* client;
-  char* client_ip_address;
-  char* client_data;
-} thread_client;
-
-static void* client_communication(void* ptr_thread_client) {
-  thread_client* client_data = (thread_client*)ptr_thread_client;
-  int* FAIL = malloc(sizeof(int));
-  *FAIL = EXIT_FAILURE;
-  while (1) {
-    // Retrieve the data send by a client.
-    int return_value =
-        receive_client_data(client_data->client_ip_address, client_data->client, client_data->client_data);
-    if (return_value == EXIT_FAILURE) {
-      (void)fprintf(
-          stderr,
-          "Error: SERVER  ->  client_communication() ->  receive_client_data() unable to receive data from '%s'\n",
-          client_data->client_ip_address);
-      return (void*)FAIL;
-    }
-    for (unsigned long i = 0; i < strlen(client_data->client_data); i++) {
-      if (client_data->client_data[i] == '\0' || client_data->client_data[i] == '\n') {
-        puts(" new line \n");
-      }
-      printf("%c", client_data->client_data[i]);
-    }
-  }
 }
 
 /* The Server is always listening for new connections. */
