@@ -1,7 +1,7 @@
 # -*- MakeFile -*-
 
 BINARY:=PedroR_lab1
-SRC_DIRECTORY:=./src ./src/lab1_socket ./src/lab1_print
+SRC_DIRECTORY:=./src ./src/lab1_socket ./src/lab1_print ./src/lab1_queue
 
 # Automatically add the -I onto each include directory.
 INCLUDE_FILES:=$(foreach D,$(SRC_DIRECTORY),-I$(wildcard $(D)/*.h))

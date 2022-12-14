@@ -14,6 +14,7 @@
 #include <sys/socket.h>
 
 #include "lab1_print/embsys_lab1_print.h"
+#include "lab1_queue/embsys_lab1_queue.h"
 #include "lab1_socket/embsys_lab1_socket.h"
 
 #define BAR "********************************************************************************\n"

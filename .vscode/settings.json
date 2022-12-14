@@ -23,6 +23,7 @@
     "posix",
     "raii",
     "realloc",
+    "relock",
     "roundings",
     "Rsanitize",
     "stringview",
