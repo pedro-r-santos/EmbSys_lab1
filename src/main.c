@@ -5,16 +5,11 @@
  */
 #include <arpa/inet.h>
 #include <bits/pthreadtypes.h>
-#include <netdb.h>
 #include <pthread.h>
-#include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
 
 #include "lab1_print/embsys_lab1_print.h"
-#include "lab1_queue/embsys_lab1_queue.h"
 #include "lab1_socket/embsys_lab1_socket.h"
 #include "lab1_thread_work/embsys_lab1_thread_work.h"
 
@@ -24,11 +19,12 @@ static void server_waiting_for_client(void) {
   (void)stdout_print(BAR);
   (void)stdout_print("SERVER  -> listening for connections...\n");
 }
+//
 
 /* The Server is always listening for new connections. */
 static int server_listening_loop(file_descriptor* server) {
   while (1) {
-    thread_client* client_data = malloc(sizeof(thread_client));
+    thread_client* client_data = NULL;
     client_data = &(((thread_client){
         .server = server,
         .client = malloc(sizeof(int)),

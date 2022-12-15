@@ -96,7 +96,6 @@ extern int accept_incoming_connection(const file_descriptor* server, file_descri
  * function fails, the client file descriptor will be closed and freed, if the failure happens because of the system
  * the server will also be closed and freed. If the function succeeds, data send by the client will be known.
  *
- * @param server file descriptor.
  * @param client_ip_address client IP address.
  * @param client file descriptor.
  * @param client_data client data.
@@ -104,18 +103,5 @@ extern int accept_incoming_connection(const file_descriptor* server, file_descri
  * otherwise returns EXIT_SUCCESS.
  */
 extern int receive_client_data(const char* client_ip_address, const file_descriptor* client, char* client_data);
-
-/**
- * @brief This function will send data to a client. If the function fails to send data returns EXIT_FAILURE, otherwise
- * returns EXIT_SUCCESS. If the function fails, the client and server file descriptor will be closed and freed.
- *
- * @param server file descriptor.
- * @param client_ip_address client IP address.
- * @param client file descriptor.
- * @param data_to_client data to send to client.
- * @return int EXIT_FAILURE if the function fails to send data, otherwise returns EXIT_SUCCESS.
- */
-extern int send_data_to_client(file_descriptor* server, const char* client_ip_address, file_descriptor* client,
-                               const char* data_to_client);
 
 #endif

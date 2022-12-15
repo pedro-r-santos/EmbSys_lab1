@@ -1,7 +1,6 @@
 #include "embsys_lab1_socket.h"
 
 #include <netdb.h>
-#include <pthread.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -278,7 +277,6 @@ extern int accept_incoming_connection(const file_descriptor* server, file_descri
  * function fails, the client file descriptor will be closed and freed, if the failure happens because of the system
  * the server will also be closed and freed. If the function succeeds, data send by the client will be known.
  *
- * @param server file descriptor.
  * @param client_ip_address client IP address.
  * @param client file descriptor.
  * @param client_data client data.
@@ -305,41 +303,3 @@ extern int receive_client_data(const char* client_ip_address, const file_descrip
   client_data[number_bytes] = '\0';
   return EXIT_SUCCESS;
 }
-
-/**
- * @brief This function will send data to a client. If the function fails to send data returns EXIT_FAILURE, otherwise
- * returns EXIT_SUCCESS. If the function fails, the client and server file descriptor will be closed and freed.
- *
- * @param server file descriptor.
- * @param client_ip_address client IP address.
- * @param client file descriptor.
- * @param data_to_client data to send to client.
- * @return int EXIT_FAILURE if the function fails to send data, otherwise returns EXIT_SUCCESS.
- */
-// extern int send_data_to_client(const char* client_ip_address, file_descriptor* client, const char* data_to_client) {
-//   // The send() function returns the number of bytes sent. If the number of bytes sent is -1, the send() function
-//   // failed. If the number of bytes sent is 0, the client has closed the connection. The send() function sends data
-//   // only to a socket in a connected state.
-//   ssize_t return_value = send(*client, data_to_client, strlen(data_to_client), 0);
-//   bool exit_failure = false;
-//   char* error_str = NULL;
-//   if (return_value == -1 || return_value == 0) {
-//     error_str = return_value == -1
-//                     ? "Error: SERVER -> send_data_to_client() -> send() failed "
-//                     : "Error: SERVER -> send_data_to_client() -> send() client has closed the connection ";
-//     (void)stderr_print(error_str);
-//     exit_failure = true;
-//   }
-//   if (exit_failure) {
-//     int return_value =
-//         fprintf(stderr, "Error: SERVER -> unable to send data to -> %s\n\tClosing communication with client",
-//                 client_ip_address);
-//     if (return_value < 0) {
-//       perror("Error: SERVER -> send_data_to_client() : fprintf() ");
-//     }
-//     // (void)close_socket(client);
-//     // (void)close_socket(server);
-//     return EXIT_FAILURE;
-//   }
-//   return EXIT_SUCCESS;
-// }

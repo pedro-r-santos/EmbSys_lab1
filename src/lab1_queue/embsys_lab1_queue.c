@@ -26,7 +26,7 @@ static int queue_mutex(queue_t* queue) {
     perror("ERROR: QUEUE -> queue_create() -> pthread_mutexattr_init() failed to initialize the mutex attributes ");
     goto exit_failure;
   }
-  // If a thread attempts to relock without first unlocking or unlock a mutex that is unlocked, it will return an error.
+  // If a thread attempts to re-lock without first unlocking or unlock a mutex that is unlocked, it will return an error.
   if (pthread_mutexattr_settype(queue->mutex_attr, PTHREAD_MUTEX_ERRORCHECK) != 0) {
     perror("ERROR: QUEUE -> queue_create() -> pthread_mutexattr_settype() failed to set the mutex attributes ");
     goto exit_failure;

@@ -5,18 +5,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 // const int* const FAILED_THREAD = (int*)EXIT_FAILURE;
 // const int* const SUCCESSFUL_THREAD = (int*)EXIT_SUCCESS;
 
-static inline int* failed_thread() {
+static inline int* failed_thread(void) {
   int* FAILED_THREAD = malloc(sizeof(int));
   *FAILED_THREAD = EXIT_FAILURE;
   return FAILED_THREAD;
 }
 
-static inline int* successful_thread() {
+static inline int* successful_thread(void) {
   int* SUCCESSFUL_THREAD = malloc(sizeof(int));
   *SUCCESSFUL_THREAD = EXIT_SUCCESS;
   return SUCCESSFUL_THREAD;
