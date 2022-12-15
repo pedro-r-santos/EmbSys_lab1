@@ -15,7 +15,7 @@ static int queue_mutex(queue_t* queue) {
     return EXIT_FAILURE;
   }
   // allocate memory for mutex attributes
-  queue->mutex_attr = malloc(sizeof(pthread_mutexattr_t));
+  queue->mutex_attr = calloc((size_t)1, sizeof(pthread_mutexattr_t));
   if (queue->mutex_attr == NULL) {
     perror("ERROR: QUEUE -> queue_create() -> malloc() failed to allocate memory for the mutex attributes ");
     free(queue->mutex);
@@ -44,51 +44,28 @@ exit_failure:
   return EXIT_FAILURE;
 }
 
-extern int queue_create(queue_t* queue) {
+extern queue_t* queue_create(void) {
   // malloc a clean space for the queue
-  queue = calloc((size_t)1, sizeof(queue_t));
+  queue_t* queue = calloc((size_t)1, sizeof(queue_t));
   if (queue == NULL) {
     perror("ERROR: QUEUE -> queue_create() -> calloc() failed to allocate memory for the queue ");
-    return EXIT_FAILURE;
+    return NULL;
   }
   // empty queue, head and tail point to the same node
   queue->head = queue->tail = NULL;
   // zero size
   queue->size = 0;
   // initialize the mutex
-  // if (queue_mutex(queue) == EXIT_FAILURE) {
-  //   perror("ERROR: QUEUE -> queue_create() -> queue_mutex() failed to initialize the mutex ");
-  //   free(queue);
-  //   queue = NULL;
-  //   return EXIT_FAILURE;
-  // }
-  // queue->mutex = calloc((size_t)1, sizeof(pthread_mutex_t));
-  // if (queue->mutex == NULL) {
-  //   perror("ERROR: QUEUE -> queue_create() -> malloc() failed to allocate memory for the mutex ");
-  //   return EXIT_FAILURE;
-  // }
-  // allocate memory for mutex attributes
-  queue->mutex_attr = malloc(sizeof(pthread_mutexattr_t));
-  if (queue->mutex_attr == NULL) {
-    perror("ERROR: QUEUE -> queue_create() -> malloc() failed to allocate memory for the mutex attributes ");
-    free(queue->mutex);
-    queue->mutex = NULL;
-    return EXIT_FAILURE;
-  }
-  if (pthread_mutexattr_init(queue->mutex_attr) != 0) {
-    perror("ERROR: QUEUE -> queue_create() -> pthread_mutexattr_init() failed to initialize the mutex attributes ");
-  }
-  // If a thread attempts to relock without first unlocking or unlock a mutex that is unlocked, it will return an error.
-  if (pthread_mutexattr_settype(queue->mutex_attr, PTHREAD_MUTEX_ERRORCHECK) != 0) {
-    perror("ERROR: QUEUE -> queue_create() -> pthread_mutexattr_settype() failed to set the mutex attributes ");
-  }
-  if (pthread_mutex_init(queue->mutex, queue->mutex_attr) != 0) {
-    perror("ERROR: QUEUE -> queue_create() -> pthread_mutex_init() failed to initialize the mutex ");
+  if (queue_mutex(queue) == EXIT_FAILURE) {
+    perror("ERROR: QUEUE -> queue_create() -> queue_mutex() failed to initialize the mutex ");
+    free(queue);
+    queue = NULL;
+    return NULL;
   }
   assert(queue->mutex != NULL);
   // initialize the condition variable
   queue->not_empty = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
-  return EXIT_SUCCESS;
+  return queue;
 }
 
 extern int queue_enqueue(queue_t* queue, void* data) {
@@ -98,7 +75,7 @@ extern int queue_enqueue(queue_t* queue, void* data) {
     return EXIT_FAILURE;
   }
   // create a new queue struct to hold the data
-  queue_struct_t* new_node = calloc((size_t)1, sizeof(queue_struct_t));
+  queue_element_t* new_node = calloc((size_t)1, sizeof(queue_element_t));
   if (new_node == NULL) {
     perror("ERROR: QUEUE -> queue_enqueue() -> calloc() failed to allocate memory for the new node ");
     return EXIT_FAILURE;
@@ -150,7 +127,7 @@ extern int queue_dequeue(queue_t* queue, void** data) {
     queue->size--;
   } else {
     // otherwise, set the head to the next element
-    queue_struct_t* temp = queue->head;
+    queue_element_t* temp = queue->head;
     queue->head = queue->head->next;
     free(temp);
     queue->size--;
@@ -171,7 +148,7 @@ extern int queue_destroy(queue_t* queue) {
   }
   // free the queue
   while (queue->size > 0) {
-    queue_struct_t* temp = queue->head;
+    queue_element_t* temp = queue->head;
     // free stored data
     if (temp->data != NULL) {
       free(temp->data);

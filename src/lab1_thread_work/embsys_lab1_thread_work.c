@@ -1,6 +1,10 @@
 #include "embsys_lab1_thread_work.h"
 
+#include <assert.h>
+#include <pthread.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 // const int* const FAILED_THREAD = (int*)EXIT_FAILURE;
@@ -23,8 +27,8 @@ extern void* client_communication(void* ptr_thread_client) {
   int* FAILED_THREAD = failed_thread();
   int* SUCCESS_THREAD = successful_thread();
   // create a queue to save raw data
-  queue_t* raw_data_queue = NULL;
-  queue_create(raw_data_queue);
+  queue_t* raw_data_queue = queue_create();
+  assert(raw_data_queue != NULL);
   // thread that will parse raw data
   pthread_t thread_handle_raw_data = 0;
   pthread_create(&thread_handle_raw_data, NULL, handle_client_raw_data, (void*)raw_data_queue);
@@ -39,11 +43,11 @@ extern void* client_communication(void* ptr_thread_client) {
       pthread_exit((void*)FAILED_THREAD);
     }
     // save raw data to queue
-    for (unsigned long i = 0; i < strlen(clint_info->client_data); i++) {
-      queue_enqueue(raw_data_queue, (void*)&clint_info->client_data[i]);
-    }
+    char* data = malloc(sizeof(char) * MAX_CLIENT_DATA);  // prevent memory leak, on receiving new data, data race
+    strcpy(data, clint_info->client_data);
+    queue_enqueue(raw_data_queue, (void*)data);
   }
-  pthread_exit(SUCCESS_THREAD);
+  // pthread_exit(SUCCESS_THREAD);
 }
 
 extern void* handle_client_raw_data(void* ptr_queue_raw_data) {
@@ -52,14 +56,17 @@ extern void* handle_client_raw_data(void* ptr_queue_raw_data) {
   int* SUCCESS_THREAD = successful_thread();
   while (1) {
     // get raw data from queue
-    char* raw_data = NULL;
-    sleep(1);
+    char* raw_data = malloc(sizeof(char) * MAX_CLIENT_DATA);
     queue_dequeue(raw_data_queue, (void**)&raw_data);
-    if (*raw_data == '\0' || *raw_data == '\n') {
-      puts("\n");
-    } else {
-      printf("%c", *raw_data);
+    printf("\nraw data: \n");
+    for (size_t i = 0; i < strlen(raw_data); i++) {
+      if (raw_data[i] == '\0' || raw_data[i] == '\n') {
+        puts("");
+      }
+      printf("%c", raw_data[i]);
     }
+    free(raw_data);
+    raw_data = NULL;
   }
-  pthread_exit(SUCCESS_THREAD);
+  // pthread_exit(SUCCESS_THREAD);
 }
