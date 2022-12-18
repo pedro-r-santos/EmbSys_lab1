@@ -24,13 +24,17 @@ static inline int* successful_thread(void) {
 extern void* client_communication(void* ptr_thread_client) {
   thread_client* clint_info = (thread_client*)ptr_thread_client;
   int* FAILED_THREAD = failed_thread();
-  int* SUCCESS_THREAD = successful_thread();
+  //  int* SUCCESS_THREAD = successful_thread();
   // create a queue to save raw data
   queue_t* raw_data_queue = queue_create();
   assert(raw_data_queue != NULL);
   // thread that will parse raw data
   pthread_t thread_handle_raw_data = 0;
-  pthread_create(&thread_handle_raw_data, NULL, handle_client_raw_data, (void*)raw_data_queue);
+  if (pthread_create(&thread_handle_raw_data, NULL, handle_client_raw_data, (void*)raw_data_queue) != 0) {
+    stderr_print("Error: SERVER: Failed to create thread to handle raw data ");
+    queue_destroy(raw_data_queue);
+    pthread_exit((void*)FAILED_THREAD);
+  }
   while (1) {
     // Retrieve the data send by a client.
     int return_value = receive_client_data(clint_info->client_ip_address, clint_info->client, clint_info->client_data);
@@ -42,11 +46,21 @@ extern void* client_communication(void* ptr_thread_client) {
       pthread_exit((void*)FAILED_THREAD);
     }
     // save raw data to queue
-    char* data = malloc(sizeof(char) * MAX_CLIENT_DATA);  // prevent memory leak, on receiving new data, data race
-    strcpy(data, clint_info->client_data);
-    queue_enqueue(raw_data_queue, (void*)data);
+    char* data = malloc(sizeof(char) * MAX_CLIENT_DATA);
+    if (data == NULL) {
+      stderr_print("Error: SERVER  ->  client_communication() ->  malloc() unable to allocate memory\n");
+      pthread_exit((void*)FAILED_THREAD);
+    }
+    if (strcpy(data, clint_info->client_data) == NULL) {
+      stderr_print("Error: SERVER  ->  client_communication() ->  strcpy() unable to copy data\n");
+      pthread_exit((void*)FAILED_THREAD);
+    }
+    if (queue_enqueue(raw_data_queue, (void*)data) == EXIT_FAILURE) {
+      stderr_print("Error: SERVER  ->  client_communication() ->  queue_enqueue() unable to enqueue data\n");
+      pthread_exit((void*)FAILED_THREAD);
+    }
   }
-  // pthread_exit(SUCCESS_THREAD);
+  //   pthread_exit(SUCCESS_THREAD);
 }
 
 extern void* handle_client_raw_data(void* ptr_queue_raw_data) {

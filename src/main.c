@@ -25,12 +25,12 @@ static void server_waiting_for_client(void) {
 static int server_listening_loop(file_descriptor* server) {
   while (1) {
     thread_client* client_data = NULL;
-    client_data = &(((thread_client){
+    client_data = &(thread_client) {
         .server = server,
         .client = malloc(sizeof(int)),
         .client_ip_address = malloc(sizeof(char) * INET6_ADDRSTRLEN),  // IPv4 fits in IPv6.
         .client_data = malloc(sizeof(char) * MAX_CLIENT_DATA),
-    }));
+    };
     // Welcoming text.
     server_waiting_for_client();
     // Accept an incoming connection.
